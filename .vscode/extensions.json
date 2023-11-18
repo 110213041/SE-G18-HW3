@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "denoland.vscode-deno",
+        "ms-vscode.vscode-typescript-next",
+        "vue.volar",
+        "vue.vscode-typescript-vue-plugin"
+    ]
+}

@@ -1,41 +1,62 @@
-# Vite + Deno + Vue 3 + TypeScript
+# 130031 - Software Engineering Group 18
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Repository for tracking Group 18 progress.
 
-## Recommended IDE Setup
+## Contribution (Guide for Group mate)
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+此 repo 會用 `Deno` 爲核心, 前端會用 `Vite + Vue3` 開發, 後端同樣使用 `Deno`.
 
-## Type Support For `.vue` Imports in TS
+同時會用 `TypeScript` 撰寫.
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+### 建議開發環境設定
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+建議使用 `VSCode`, 配搭插件 `Deno` + `JavaScript and TypeScript Nightly` + `Vue Language Features (Volar)` + `TypeScript Vue Plugin (Volar)`.
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+打開 `VSCode` 時應該會有 4個 建議安裝插件, 都裝下去就可以了.
 
-## Running
-
-You need to have Deno v1.28.0 or later installed to run this repo.
-
-Start a dev server:
+### 架構
 
 ```
-$ deno task dev
+.
+├── .vscode             // project vscode 設定檔, 不用碰
+├── src/
+│   ├── client/         // 前端程式碼存放位置
+│   │   ├── App.vue
+│   │   ├── index.html
+│   │   └── main.ts
+│   └── server/         // 後端程式碼存放位置
+│       └── entry.ts
+├── .gitignore          // 讓 git 不追蹤那些文件夾或路徑, 不用碰
+├── deno.json           // deno 相關設定, 不用碰
+├── deno.lock           // 插件版本管理, 不用碰
+└── vite.config.mjs     // 前端編譯選項, 不用碰
 ```
 
-## Deploy
+如果編輯 前端, 程式碼都會在 `./src/client` 裏面.
+如果編輯 后端, 程式碼都會在 `./src/server` 裏面.
 
-Build production assets:
+#### 前端
 
+前端會用 SPA (Single Page Application) 方式設計.
+檔案應該只會有一個 `index.html` 檔案, 應該不會有其他 `html` 檔案.
+
+排版相關應用 `*.vue` 撰寫, 純邏輯則用 `*.ts`.
+
+啓動 前端 開發環境, 隨時預覽請使用以下指令
 ```
-$ deno task build
+deno task dev:client
 ```
 
-## Caveats
+啓動 前端 預覽 (編譯過後結果), 請使用以下指令.
+```
+deno task preview:client
+```
 
-Currently there's a caveat for Deno users:
+#### 後端
 
-- peer dependencies need to be referenced in `vite.config.mts`. In this example
-  it is only `vue` package that needs to be referenced.
+Routing 還在考慮是否需要 framework, 暫時先放著.
+
+啓動 後端 環境指令
+```
+deno task dev:server
+```
