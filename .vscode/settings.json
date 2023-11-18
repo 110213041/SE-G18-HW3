@@ -1,0 +1,16 @@
+{
+  "deno.disablePaths": [
+    "./src/client",
+    "./dist"
+  ],
+  "deno.enable": true,
+  "deno.lint": true,
+  "deno.unstable": false,
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  }
+}
