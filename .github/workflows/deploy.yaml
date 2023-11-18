@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "main"
+      - "dev"
 
   pull_request:
     branches:
@@ -19,7 +20,7 @@ jobs:
 
     steps:
       - name: Clone repository
-        uses: actions/checkout@3
+        uses: actions/checkout@v3
 
       - uses: denoland/setup-deno@v1
         with:
