@@ -10,7 +10,12 @@ Repository for tracking Group 18 progress.
 
 ### 建議開發環境設定
 
-建議使用 `VSCode`, 配搭插件 `Deno` + `JavaScript and TypeScript Nightly` + `Vue Language Features (Volar)` + `TypeScript Vue Plugin (Volar)`.
+建議使用 `VSCode`, 配搭插件:
+
+- `Deno`
+- `JavaScript and TypeScript Nightly`
+- `Vue Language Features (Volar)`
+- `TypeScript Vue Plugin (Volar)`
 
 打開 `VSCode` 時應該會有 4個 建議安裝插件, 都裝下去就可以了.
 
@@ -51,7 +56,6 @@ deno task dev:client
 ```
 deno task preview:client
 ```
-
 #### 後端
 
 Routing 還在考慮是否需要 framework, 暫時先放著.
