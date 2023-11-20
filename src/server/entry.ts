@@ -11,7 +11,7 @@ async function mainHandler(req: Request): Promise<Response> {
   if (reqUrl.pathname.startsWith("/assets")) {
     console.log(Deno.cwd());
     return await serveDir(req, {
-      fsRoot: `/dist/assets`,
+      fsRoot: `./dist/assets`,
       urlRoot: "assets",
     });
   }
@@ -20,7 +20,7 @@ async function mainHandler(req: Request): Promise<Response> {
     return await apiController(req);
   }
 
-  return await serveFile(req, "/dist/index.html");
+  return await serveFile(req, "./dist/index.html");
 }
 
 if (import.meta.main) {
