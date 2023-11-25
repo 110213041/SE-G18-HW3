@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { cartState } from "../controller/cart";
+import { updateCartItemWrapper } from "../controller/cart";
 
 import { ref } from "vue";
 import { useRoute } from "vue-router";
@@ -59,7 +59,7 @@ getData();
       <div>{{ resultJson.result.owner_name }}</div>
       <!-- @ts-ignore -->
       <button @click=" //@ts-ignore
-        cartState.updateCartItem(resultJson.result.id, 1)"> add to cart </button>
+        updateCartItemWrapper(resultJson.result.id, 1)"> add to cart </button>
 
     </div>
 

@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive, Ref, ref } from "vue";
 
 type cartItem = {
   itemId: number;
@@ -36,3 +36,76 @@ export const cartState = reactive({
     localStorage.setItem("cart_state", JSON.stringify(this.cart));
   },
 });
+
+export const isShow = ref(false);
+export const isLoading = ref(false);
+
+export type item = {
+  id: number;
+  display_name: string;
+  price: number;
+  description: string;
+  owner_id: number;
+  state: number;
+};
+export const fetchResult: Ref<item[]> = ref([]);
+export const joinResult = ref([]);
+
+export async function toggleShow() {
+  isShow.value = isShow.value ? false : true;
+  if (isShow.value) {
+    await getData();
+    await updateJoinArray();
+    updateTotalCost();
+  }
+}
+
+async function getData() {
+  isLoading.value = true;
+  const pendingFetch = [...cartState.cart].map((v) => {
+    const currentUrl = new URL(location.origin);
+    currentUrl.pathname = "/api/item";
+    currentUrl.searchParams.set("q", String(v.itemId));
+    return currentUrl;
+  });
+
+  const resp: { status: "success"; result: item }[] = await Promise.all(
+    pendingFetch.map(async (url) => {
+      const resp = await fetch(url);
+      return resp.json();
+    }),
+  );
+
+  fetchResult.value = resp.map((v) => v.result);
+  isLoading.value = false;
+}
+
+export const totalCost = ref(0);
+
+export async function updateCartItemWrapper(id: number, quantity: number) {
+  cartState.updateCartItem(id, quantity);
+  await getData();
+  await updateJoinArray();
+  updateTotalCost();
+}
+
+export async function removeCartItemWrapper(id: number) {
+  cartState.removeCartItem(id);
+  await getData();
+  await updateJoinArray();
+  updateTotalCost();
+}
+
+export async function updateJoinArray() {
+  await getData();
+  joinResult.value = [cartState.cart, fetchResult.value];
+}
+
+export function updateTotalCost() {
+  totalCost.value = 0;
+  for (let i = 0; i < cartState.cart.length; i++) {
+    //@ts-ignore
+    totalCost.value += joinResult.value[0][i].quantity *
+      joinResult.value[1][i].price;
+  }
+}
