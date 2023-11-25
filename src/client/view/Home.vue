@@ -23,9 +23,8 @@ function getData() {
   fetch(queryUrl.href)
     .then(res => res.json())
     .then(res => {
-      itemArray = res;
+      itemArray = res.filter(v => v.state === 1);
       isLoading.value = false
-      console.log(itemArray)
     })
 }
 
