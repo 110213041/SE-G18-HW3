@@ -123,6 +123,100 @@ export default async function apiController(req: Request): Promise<Response> {
             "content-type": "application/json",
           },
         });
+      } else if (itemActon === "alter") {
+        if (req.headers.get("content-type") !== "application/json") break;
+        type alterSchema = {
+          id: number;
+          state?: number;
+          price?: number;
+          display_name?: string;
+          description?: string;
+        };
+
+        const requestJson: alterSchema = await req.json();
+
+        const state = requestJson.state;
+        if (Number.isInteger(state)) {
+          database.query(`UPDATE item SET "state" = ? WHERE "id" = ? `, [
+            state,
+            requestJson.id,
+          ]);
+          return new Response(JSON.stringify({ status: 200 }), {
+            status: 200,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
+        const price = requestJson.price;
+        console.log(`Number.isInteger(price) ${Number.isInteger(price)}`);
+        if (Number.isInteger(price)) {
+          database.query(`UPDATE item SET "price" = ? WHERE "id" = ? `, [
+            price,
+            requestJson.id,
+          ]);
+          return new Response(JSON.stringify({ status: 200 }), {
+            status: 200,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
+        if (requestJson.display_name !== null) {
+          database.query(`UPDATE item SET "display_name" = ? WHERE "id" = ? `, [
+            requestJson.display_name,
+            requestJson.id,
+          ]);
+          return new Response(JSON.stringify({ status: 200 }), {
+            status: 200,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
+        if (requestJson.description !== null) {
+          database.query(`UPDATE item SET "description" = ? WHERE "id" = ? `, [
+            requestJson.description,
+            requestJson.id,
+          ]);
+          return new Response(JSON.stringify({ status: 200 }), {
+            status: 200,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+      } else if (itemActon === "create") {
+        if (req.headers.get("content-type") !== "application/json") break;
+        type createSchema = {
+          owner_id: number;
+          display_name: string;
+          price: number;
+          description: string;
+        };
+
+        const createJson: createSchema = await req.json();
+        console.log(await createJson);
+        database.query(
+          `INSERT INTO item("display_name", "price", "description", "owner_id", "state") VALUES (?, ?, ?, ?, ?)`,
+          [
+            createJson.display_name,
+            createJson.price,
+            createJson.description,
+            createJson.owner_id,
+            1,
+          ],
+        );
+
+        return new Response(JSON.stringify({ status: 200 }), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+          },
+        });
       }
     }
   }
