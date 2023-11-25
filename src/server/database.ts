@@ -26,7 +26,8 @@ const memberSchema = `--sql
   INSERT INTO
     member("user_name", "email", "password")
   VALUES
-    ('client1', 'client@example.com', 'client1'), ('seller1', 'seller1@example.com', 'seller1');
+    ('client1', 'client@example.com', 'client1'), ('seller1', 'seller1@example.com', 'seller1'),
+    ('seller2', 'seller2@example.com', 'seller2');
 `;
 
 export type item = {
@@ -52,7 +53,7 @@ const itemSchema = `--sql
   INSERT INTO
     item("display_name", "price", "description", "owner_id", "state")
   VALUES
-    ('good1', 50, 'This is Good1.', 2, 1), ('good2', 120, 'This is Good2.',2, 1);
+    ('good1', 50, 'This is Good1.', 2, 1), ('good2', 120, 'This is Good2.',2, 1), ('good3', 30, 'This is Good3', 3, 1);
 `;
 
 database.execute(pragma);
