@@ -10,6 +10,7 @@ import Cart from './components/Cart.vue';
   <nav>
     <router-link to="/">Home</router-link>
     <router-link to="/about">About</router-link>
+    <router-link to="/seller">Seller</router-link>
   </nav>
   <RouterView></RouterView>
 </template>
