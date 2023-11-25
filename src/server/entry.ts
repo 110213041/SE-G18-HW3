@@ -9,7 +9,6 @@ async function mainHandler(req: Request): Promise<Response> {
   const reqUrl = new URL(req.url);
 
   if (reqUrl.pathname.startsWith("/assets")) {
-    console.log(Deno.cwd());
     return await serveDir(req, {
       fsRoot: `./dist/assets`,
       urlRoot: "assets",
