@@ -19,6 +19,7 @@ import {
       <div v-for="(_, index) in cartState.cart.length">
         <span>{{ joinResult[0][index].itemId }}</span>
         <span>{{ joinResult[1][index].display_name }}</span>
+        <span>$ {{ joinResult[1][index].price }}</span>
         <button class="cart-del-quantity-btn" @click="//@ts-ignore
           updateCartItemWrapper(joinResult[0][index].itemId, joinResult[0][index].quantity - 1)">del1</button>
         <span class="cart-quantity">{{ //@ts-ignore
