@@ -137,7 +137,7 @@ getData()
   <div v-if="!isLoading">
     <h3>Edit Zone</h3>
     <div id="exist-item-wrapper" v-for="(item, idx) in fetchResult">
-      <span>Display Name: <input type="text" :placeholder=item.display_name
+      <span>Item Name: <input type="text" :placeholder=item.display_name
           @keypress.enter="onSubmitNameHandler($event, fetchResult[idx].id)">{{ item.display_name }}</span>
 
       <span>Price: <input type="number" :placeholder=item.price
@@ -151,9 +151,9 @@ getData()
   </div>
 
   <div id="new-item=wrapper">
-    <h3>Create Zone</h3>
+    <h3>Create new items</h3>
     <span>
-      Display Name: <input type="text" ref="newItemTitle" required>
+      Item Name: <input type="text" ref="newItemTitle" required>
     </span>
     <span>
       Price: <input type="number" ref="newItemPrice" required>
@@ -162,3 +162,46 @@ getData()
     <button ref="newItemSubmitBtn" @click="submitNewItem">add item to market</button>
   </div>
 </template>
+<style scoped>
+  .page-title {
+    font-size: 24px;
+    color: #333;
+  }
+
+  .edit-zone-title {
+    font-size: 20px;
+    margin-top: 20px;
+  }
+
+  .exist-item-wrapper {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+
+  .edit-field {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+
+  #new-item-wrapper {
+    margin-top: 20px;
+  }
+
+</style>
