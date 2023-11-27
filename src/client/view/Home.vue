@@ -44,10 +44,48 @@ getData()
         <div class="item-price">{{ // @ts-ignore
           currentItem.price }}</div>
 
-        <RouterLink :to=" //@ts-ignore
-          `/item/${currentItem.id}`">to item</RouterLink>
+        <RouterLink :to=" //@ts-ignore/item/${currentItem.id}>to item "</RouterLink>
       </div>
-
     </div>
   </template>
 </template>
+<style >
+  .page-title {
+    font-size: 24px;
+    color: #333;
+  }
+  #item-list-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .item-wrapper {
+    flex: 0 0 30%;
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: transform 0.3s ease-in-out;
+  }
+  .item-wrapper:hover {
+    transform: scale(1.05);
+  }
+  .item-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .item-price {
+    margin-top: 5px;
+    color: #e44d26; /* 橙色 */
+  }
+  RouterLink {
+    display: block;
+    margin-top: 10px;
+    color: #3498db; /* 藍色 */
+    text-decoration: none;
+  }
+  RouterLink:hover {
+    text-decoration: underline;
+  }
+
+</style>
