@@ -133,6 +133,7 @@ getData()
 
 <template>
   <h2>Seller Page</h2>
+  Note:If you want to change, just enter and press the enter key. 
   <div v-if="!isLoading">
     <h3>Edit Zone</h3>
     <div id="exist-item-wrapper" v-for="(item, idx) in fetchResult">

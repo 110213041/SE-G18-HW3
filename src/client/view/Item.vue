@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { updateCartItemWrapper } from "../controller/cart";
-
+import { updateCartItemWrapper, cartState } from "../controller/cart";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -53,13 +52,21 @@ getData();
   <h2>This is Item {{ id }} Page</h2>
   <template v-if="!isLoading">
     <div v-if="resultJson.status === 'success'">
-      <div>{{ resultJson.result.display_name }}</div>
-      <div>{{ resultJson.result.price }}</div>
-      <div>{{ resultJson.result.description }}</div>
-      <div>{{ resultJson.result.owner_name }}</div>
-      <!-- @ts-ignore -->
-      <button @click=" //@ts-ignore
-        updateCartItemWrapper(resultJson.result.id, 1)"> add to cart </button>
+      <table >
+        <thead>
+          <th colspan="2">Item {{ id }}</th>
+        </thead>
+        <tbody>
+          <tr><td>name</td><td>{{ resultJson.result.display_name }}</td></tr>
+          <tr><td>price</td><td>{{ resultJson.result.price }}</td></tr>
+          <tr><td>description</td><td>{{ resultJson.result.description }}</td></tr>
+          <tr><td>seller</td><td>{{ resultJson.result.owner_name }}</td></tr>
+        </tbody>
+
+        <button @click=" //@ts-ignore
+          updateCartItemWrapper(resultJson.result.id, cartState.cart.findIndex(v => v.itemId === resultJson.result.id) === -1 ? 1 : cartState.cart.find(v => v.itemId === resultJson.result.id).quantity + 1
+          )"> add to cart </button>
+      </table>
 
     </div>
 
@@ -72,3 +79,7 @@ getData();
     <p>loading</p>
   </template>
 </template>
+<style>
+
+</style>
+

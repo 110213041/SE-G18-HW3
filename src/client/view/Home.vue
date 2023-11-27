@@ -37,17 +37,25 @@ getData()
   <h2>This is Home</h2>
   <template v-if="!isLoading">
     <div id="item-list-wrapper" v-if="itemArray.length > 0">
-      <div class="item-wrapper" v-for="currentItem in itemArray">
-        <div class="item-name">{{ // @ts-ignore
-          currentItem.display_name }}</div>
+      <div class="item-wrapper" >
+        <table>
+          <thead>
+            <tr>
+              <th>name</th>
+              <th>price</th>
+              <th></th>
+            </tr>
+          </thead>
 
-        <div class="item-price">{{ // @ts-ignore
-          currentItem.price }}</div>
+          <tbody v-for="currentItem in itemArray">
+            <td>{{ currentItem.display_name }}</td>
+            <td>{{currentItem.price }}</td>
+            <td><RouterLink :to=" //@ts-ignore
+              `/item/${currentItem.id}`">to item</RouterLink></td>
 
-        <RouterLink :to=" //@ts-ignore
-          `/item/${currentItem.id}`">to item</RouterLink>
+            </tbody>
+        </table>
       </div>
-
     </div>
   </template>
 </template>
