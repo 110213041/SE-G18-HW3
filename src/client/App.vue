@@ -16,9 +16,8 @@ import Cart from './components/Cart.vue';
 </template>
 
 <style>
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+nav {
+  display: flex;
+  gap: 10px; 
 }
 </style>
