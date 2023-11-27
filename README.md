@@ -40,6 +40,13 @@ Repository for tracking Group 18 progress.
 如果編輯 前端, 程式碼都會在 `./src/client` 裏面.
 如果編輯 后端, 程式碼都會在 `./src/server` 裏面.
 
+#### 開發指令
+
+現在無論開發前端還是後端, 一律可以使用以下指令
+```
+deno task dev
+```
+
 #### 前端
 
 前端會用 SPA (Single Page Application) 方式設計.

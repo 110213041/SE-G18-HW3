@@ -1,44 +1,27 @@
 import {
-    Application,
-    Router,
-    send,
-} from "https://deno.land/x/oak@v12.6.1/mod.ts";
-import { staticFileMiddleware } from "./staticFileMiddleware.ts";
+  serveDir,
+  serveFile,
+} from "https://deno.land/std@0.206.0/http/file_server.ts";
 
-const PORT = 8000;
+import apiController from "./api.ts";
 
-const app = new Application();
-const route = new Router();
+async function mainHandler(req: Request): Promise<Response> {
+  const reqUrl = new URL(req.url);
 
-route
-    .get("/", async (ctx) => {
-        await send(ctx, `./index.html`, {
-            root: `${Deno.cwd()}/dist`,
-        });
-    })
-    .get("/api", (ctx) => {
-        ctx.response.body = "api index";
+  if (reqUrl.pathname.startsWith("/assets")) {
+    return await serveDir(req, {
+      fsRoot: `./dist/assets`,
+      urlRoot: "assets",
     });
+  }
 
-app.use(staticFileMiddleware);
-app.use(route.routes());
+  if (reqUrl.pathname.startsWith("/api")) {
+    return await apiController(req);
+  }
 
-app.addEventListener("listen", ({ hostname, port, secure }) => {
-    console.log(
-        `Listening on: ${secure ? "https://" : "http://"}${
-            hostname ?? "localhost"
-        }:${port}`,
-    );
-});
-
-app.addEventListener("close", () => {
-    console.log("Server Close");
-});
-
-app.addEventListener("error", (e) => {
-    console.error(e);
-});
+  return await serveFile(req, "./dist/index.html");
+}
 
 if (import.meta.main) {
-    await app.listen({ port: PORT });
+  Deno.serve(mainHandler);
 }

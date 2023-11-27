@@ -1,17 +1,25 @@
 {
-    "compilerOptions": {
-        "allowJs": true
-    },
-    "nodeModulesDir": true,
-    "imports": {
-        "vue": "npm:vue@^3.3.8",
-        "vite": "npm:vite@^4.5.0"
-    },
-    "tasks": {
-        "dev:client": "deno run -A npm:vite",
-        "dev:server": "deno run -A --watch ./src/server/entry.ts",
-        "build": "deno run -A npm:vite build",
-        "preview:client": "deno run -A npm:vite preview",
-        "preview:server": "deno run -A ./src/server/entry.ts"
-    }
+  "compilerOptions": {
+    "allowJs": true
+  },
+  "imports": {
+    "vite": "npm:vite@^4.5.0",
+    "vue": "npm:vue@^3.3.8",
+    "vue-router": "npm:vue-router@^4.2.5"
+  },
+  "lint": {
+    "exclude": [
+      "./dist",
+      "./node_modules"
+    ]
+  },
+  "nodeModulesDir": true,
+  "tasks": {
+    "build": "deno run -A npm:vite build",
+    "dev": "deno task dev:client & deno task dev:server",
+    "dev:client": "deno run -A ./src/dev/watcher.ts",
+    "dev:server": "deno run -A --watch ./src/server/entry.ts",
+    "preview:client": "deno run -A npm:vite preview",
+    "preview:server": "deno run -A ./src/server/entry.ts"
+  }
 }
