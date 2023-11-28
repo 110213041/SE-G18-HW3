@@ -133,7 +133,7 @@ getData()
 
 <template>
   <h2>Seller Page</h2>
-  Note:If you want to change, just enter and press the enter key. 
+  <p>Note:If you want to change, just enter and press the enter key.</p> 
   <div v-if="!isLoading">
     <h3>Edit Zone</h3>
     <div id="exist-item-wrapper" v-for="(item, idx) in fetchResult">
@@ -146,7 +146,7 @@ getData()
       <span>Description: <textarea cols="30" rows="10" :placeholder=item.description
           @keypress.enter="onSubmitDescriptionHandler($event, fetchResult[idx].id)">{{ item.description }}</textarea></span>
 
-      <button @click="onDeleteBtnHandler(fetchResult[idx].id)" :disabled="!fetchResult[idx].state">delete item</button>
+      <button class="delBtn" @click="onDeleteBtnHandler(fetchResult[idx].id)" :disabled="!fetchResult[idx].state">delete item</button>
     </div>
   </div>
 
@@ -163,45 +163,83 @@ getData()
   </div>
 </template>
 <style scoped>
-  .page-title {
-    font-size: 24px;
-    color: #333;
-  }
+/* Apply basic styling to the seller page */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
 
-  .edit-zone-title {
-    font-size: 20px;
-    margin-top: 20px;
-  }
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
-  .exist-item-wrapper {
-    margin-top: 10px;
+h2 {
+  color: #333;
+}
+
+h3 {
+  color: #555;
+}
+
+/* Style for existing items */
+#exist-item-wrapper {
+  margin-bottom: 20px;
+}
+
+span {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: .3s;
+  cursor: pointer;
+}
+
+.delBtn:hover {
+  background-color: red;
+  color: #fff;
+
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Style for creating new items */
+#new-item-wrapper {
+  margin-top: 20px;
+}
+
+/* Responsive layout */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
   }
-
-  .edit-field {
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-  }
-
-  button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-  }
-
-  #new-item-wrapper {
-    margin-top: 20px;
-  }
+}
 
 </style>

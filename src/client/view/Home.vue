@@ -37,25 +37,60 @@ getData()
   <h2>This is Home</h2>
   <template v-if="!isLoading">
     <div id="item-list-wrapper" v-if="itemArray.length > 0">
-      <div class="item-wrapper" >
-        <table>
-          <thead>
-            <tr>
-              <th>name</th>
-              <th>price</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody v-for="currentItem in itemArray">
-            <td>{{ currentItem.display_name }}</td>
-            <td>{{currentItem.price }}</td>
-            <td><RouterLink :to=" //@ts-ignore
-              `/item/${currentItem.id}`">to item</RouterLink></td>
-
-            </tbody>
-        </table>
+      <div class="item-wrapper" v-for="currentItem in itemArray">
+          <div>{{ currentItem.display_name }}</div>    
+          <div>{{currentItem.price }}</div>    
+          <div>
+            <RouterLink :to=" //@ts-ignore`/item/${currentItem.id}`">to item</RouterLink>
+          </div>
       </div>
     </div>
   </template>
 </template>
+<style scoped>
+
+.page-title {
+  font-size: 24px;
+  color: #333;
+}
+
+#item-list-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.item-wrapper {
+  flex: 0 0 30%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.item-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.item-name {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.item-price {
+  margin-top: 5px;
+  color: #e44d26; /* 橙色 */
+}
+
+RouterLink {
+  display: block;
+  margin-top: 10px;
+  color: #3498db; /* 藍色 */
+  text-decoration: none;
+}
+
+RouterLink:hover {
+  text-decoration: underline;
+}
+</style>

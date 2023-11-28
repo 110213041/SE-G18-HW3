@@ -10,49 +10,45 @@ import {
   joinResult
 } from "../controller/cart";
 </script>
-
 <template>
-  <button @click="toggleShow">{{ isShow ? "Close" : "Cart" }}</button>
-  <div v-if="isShow">
-    <template v-if="cartState.cart.length > 0">
-      <!-- <div v-for="cartItem in cartState.cart"> -->
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>name</th>
-            <th>price</th>
-            <th>quantity</th>
-            <th>remove</th>
-          </tr>
-        </thead>
+  <div>
+    <button @click="toggleShow">{{ isShow ? "Close" : "Cart" }}</button>
+    <div v-if="isShow">
+      <template v-if="cartState.cart.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(cartItem, index) in cartState.cart" :key="cartItem.itemId">
+              <td>{{ joinResult[0][index].itemId }}</td>
+              <td>{{ joinResult[1][index].display_name }}</td>
+              <td>$ {{ joinResult[1][index].price }}</td>
+              <td>
+                <button class="cart-btn" @click="updateCartItem(joinResult[0][index].itemId, -1)">-</button>
+                <span class="cart-quantity">{{ joinResult[0][index].quantity }}</span>
+                <button class="cart-btn" @click="updateCartItem(joinResult[0][index].itemId, 1)">+</button>
+              </td>
+              <td>
+                <button class="cart-btn" @click="removeCartItem(joinResult[0][index].itemId)">Remove Item</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </template>
 
-        <tbody v-for="(_, index) in cartState.cart.length">
-          <tr>
-          <td>{{ joinResult[0][index].itemId }}</td>
-          <td>{{ joinResult[1][index].display_name }}</td>
-          <td>$ {{ joinResult[1][index].price }}</td>
-          <td>
-          <button class="cart-del-quantity-btn" @click="//@ts-ignore
-            updateCartItemWrapper(joinResult[0][index].itemId, joinResult[0][index].quantity - 1)">-</button>
-          <span class="cart-quantity">{{ //@ts-ignore
-            joinResult[0][index].quantity }}</span>
-          <button class="cart-add-quantity-btn" @click="//@ts-ignore
-            updateCartItemWrapper(joinResult[0][index].itemId, joinResult[0][index].quantity + 1)">+</button>
-          </td>
-          <td><button class="cart-rm-quantity-btn" @click="//@ts-ignore
-            removeCartItemWrapper(joinResult[0][index].itemId)">remove item</button>
-          </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      
-    </template>
-    <template v-else>
-      <p>empty cart</p>
-    </template>
-    <div>Total: ${{ totalCost }}</div>
+      <template v-else>
+        <p>Empty Cart</p>
+      </template>
+
+      <div>Total: ${{ totalCost }}</div>
+    </div>
   </div>
 </template>
 
@@ -76,7 +72,6 @@ import {
   .cart-quantity {
     margin: 0 5px;
   }
-
   .cart-del-quantity-btn,
   .cart-add-quantity-btn,
   .cart-rm-quantity-btn {
@@ -85,6 +80,4 @@ import {
     border: none;
     border-radius: 3px;
   }
-
-
 </style>
