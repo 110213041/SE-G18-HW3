@@ -1,46 +1,7 @@
-import { reactive, Ref, ref } from "vue";
+import { type Ref, ref, watch } from "vue";
+import { cart, type cartItem } from "../model/global_state";
 
-type cartItem = {
-  itemId: number;
-  quantity: number;
-};
-
-let localCart = localStorage.getItem("cart_state");
-if (localCart === null) {
-  localStorage.setItem("cart_state", JSON.stringify([]));
-  localCart = JSON.stringify([]);
-}
-
-const cart: cartItem[] = JSON.parse(localCart);
-
-export const cartState = reactive({
-  cart: cart,
-  updateCartItem(id: number, quantity: number) {
-    if (quantity < 1) quantity = 1;
-
-    const targetIndex = this.cart.findIndex((v: cartItem) => v.itemId === id);
-    if (targetIndex > -1) {
-      this.cart[targetIndex].quantity = quantity;
-    } else {
-      this.cart.push({
-        itemId: id,
-        quantity: quantity,
-      });
-    }
-    this.cart.sort((a: cartItem, b: cartItem) => a.itemId - b.itemId);
-    localStorage.setItem("cart_state", JSON.stringify(this.cart));
-  },
-  removeCartItem(id: number) {
-    this.cart = this.cart.filter((v: cartItem) => v.itemId !== id);
-    this.cart.sort((a: cartItem, b: cartItem) => a.itemId - b.itemId);
-    localStorage.setItem("cart_state", JSON.stringify(this.cart));
-  },
-});
-
-export const isShow = ref(false);
-export const isLoading = ref(false);
-
-export type item = {
+type item = {
   id: number;
   display_name: string;
   price: number;
@@ -48,64 +9,121 @@ export type item = {
   owner_id: number;
   state: number;
 };
-export const fetchResult: Ref<item[]> = ref([]);
-export const joinResult = ref([]);
 
-export async function toggleShow() {
-  isShow.value = isShow.value ? false : true;
-  if (isShow.value) {
-    await getData();
-    await updateJoinArray();
-    updateTotalCost();
-  }
-}
+type itemInfo = Pick<cartItem, "quantity"> & Omit<item, "state">;
 
-async function getData() {
-  isLoading.value = true;
-  const pendingFetch = [...cartState.cart].map((v) => {
-    const currentUrl = new URL(location.origin);
-    currentUrl.pathname = "/api/item";
-    currentUrl.searchParams.set("q", String(v.itemId));
-    return currentUrl;
-  });
-
-  const resp: { status: "success"; result: item }[] = await Promise.all(
-    pendingFetch.map(async (url) => {
-      const resp = await fetch(url);
-      return resp.json();
-    }),
-  );
-
-  fetchResult.value = resp.map((v) => v.result);
-  isLoading.value = false;
-}
-
+export const isShow = ref(false);
+export const cartDetailItem: Ref<itemInfo[]> = ref([]);
 export const totalCost = ref(0);
 
-export async function updateCartItemWrapper(id: number, quantity: number) {
-  cartState.updateCartItem(id, quantity);
-  await getData();
-  await updateJoinArray();
-  updateTotalCost();
+export function toggleShow() {
+  isShow.value = isShow.value ? false : true;
 }
 
-export async function removeCartItemWrapper(id: number) {
-  cartState.removeCartItem(id);
-  await getData();
-  await updateJoinArray();
-  updateTotalCost();
-}
+export function updateCartItem(id: number, quantity: number) {
+  if (quantity < 1) quantity = 1;
 
-export async function updateJoinArray() {
-  await getData();
-  joinResult.value = [cartState.cart, fetchResult.value];
-}
+  const targetId = cart.value.findIndex((v) => v.itemId === id);
 
-export function updateTotalCost() {
-  totalCost.value = 0;
-  for (let i = 0; i < cartState.cart.length; i++) {
-    //@ts-ignore
-    totalCost.value += joinResult.value[0][i].quantity *
-      joinResult.value[1][i].price;
+  if (targetId > -1) {
+    cart.value[targetId].quantity = quantity;
+  } else {
+    cart.value.push({
+      itemId: id,
+      quantity: quantity,
+    });
   }
+
+  cart.value.sort((a, b) => a.itemId - b.itemId);
+
+  updateCartDetailInfo();
 }
+
+export function removeCartItem(id: number) {
+  cart.value = cart.value.filter((v) => v.itemId !== id);
+  cart.value.sort((a, b) => a.itemId - b.itemId);
+
+  updateCartDetailInfo();
+}
+
+async function updateCartDetailInfo() {
+  const links = [...cart.value].map((v) => {
+    const url = new URL(location.origin);
+    url.pathname = "/api/item";
+    url.searchParams.set("q", String(v.itemId));
+    return url;
+  });
+
+  type successResponse = {
+    status: "success";
+    result: item;
+  };
+
+  type failResponse = {
+    status: "fail";
+    message: string;
+  };
+
+  type dbResponse = successResponse | failResponse;
+
+  const resp: dbResponse[] = await Promise.all(links.map(async (url) => {
+    const resp = await fetch(url);
+    return resp.json();
+  }));
+
+  const failResp = resp.filter((v) => v.status === "fail");
+
+  if (failResp.length > 0) {
+    console.error("cart request api fail!");
+    console.error(failResp);
+    return;
+  }
+
+  const successResp = resp.filter((v) =>
+    v.status === "success"
+  ) as successResponse[];
+  const successResult = successResp.map((v) => v.result).sort((a, b) =>
+    a.id - b.id
+  );
+
+  cartDetailItem.value = [];
+
+  cart.value.sort((a, b) => a.itemId - b.itemId).forEach((v, i) => {
+    cartDetailItem.value.push(
+      {
+        id: v.itemId,
+        display_name: successResult[i].display_name,
+        description: successResult[i].description,
+        price: successResult[i].price,
+        owner_id: successResult[i].owner_id,
+        quantity: v.quantity,
+      },
+    );
+  });
+
+  totalCost.value = cartDetailItem.value.reduce(
+    (prev, v) => prev + v.price * v.quantity,
+    0,
+  );
+}
+
+export function initCart() {
+  let localCart = localStorage.getItem("cart_state");
+
+  if (localCart === null) {
+    localStorage.setItem("cart_state", JSON.stringify([]));
+    localCart = JSON.stringify([]);
+  }
+
+  cart.value = JSON.parse(localCart);
+}
+
+watch(cart, () => {
+  console.log("cart");
+  console.log(cart.value);
+});
+
+watch(cartDetailItem, () => {
+  console.log("cartDetailItem");
+  console.log(cartDetailItem.value);
+});

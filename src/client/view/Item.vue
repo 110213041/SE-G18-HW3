@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { updateCartItemWrapper, cartState } from "../controller/cart";
-import { ref } from "vue";
+import { updateCartItem } from "../controller/cart";
+import { cart } from "../model/global_state";
+import { ref, type Ref } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -22,11 +23,28 @@ type dbResponse = {
   status: "fail";
   message: string;
 };
-let resultJson: dbResponse = ref(null);
+
+const resultJson: Ref<dbResponse> = ref({ status: "fail", message: "" });
 const isLoading = ref(true);
 
 
-// Control 
+// Control
+function addOne(id: number) {
+  if (resultJson.value.status === "fail") {
+    return;
+  }
+
+  const target = resultJson.value.result
+  const targetIndex = cart.value.findIndex(v => v.itemId === target.id)
+
+  if (targetIndex < 0) {
+    updateCartItem(id, 1);
+    return;
+  }
+
+  updateCartItem(id, cart.value[targetIndex].quantity + 1);
+}
+
 function getData() {
   const queryUrl = new URL(location.origin);
   queryUrl.pathname = "/api/item";
@@ -35,7 +53,7 @@ function getData() {
   fetch(queryUrl.href)
     .then(res => res.json())
     .then(res => {
-      resultJson = res;
+      resultJson.value = res;
       isLoading.value = false;
     })
     .catch(e => {
@@ -52,20 +70,30 @@ getData();
   <h2>This is Item {{ id }} Page</h2>
   <template v-if="!isLoading">
     <div v-if="resultJson.status === 'success'">
-      <table >
+      <table>
         <thead>
           <th colspan="2">Item {{ id }}</th>
         </thead>
         <tbody>
-          <tr><td>name</td><td>{{ resultJson.result.display_name }}</td></tr>
-          <tr><td>price</td><td>{{ resultJson.result.price }}</td></tr>
-          <tr><td>description</td><td>{{ resultJson.result.description }}</td></tr>
-          <tr><td>seller</td><td>{{ resultJson.result.owner_name }}</td></tr>
+          <tr>
+            <td>name</td>
+            <td>{{ resultJson.result.display_name }}</td>
+          </tr>
+          <tr>
+            <td>price</td>
+            <td>{{ resultJson.result.price }}</td>
+          </tr>
+          <tr>
+            <td>description</td>
+            <td>{{ resultJson.result.description }}</td>
+          </tr>
+          <tr>
+            <td>seller</td>
+            <td>{{ resultJson.result.owner_name }}</td>
+          </tr>
         </tbody>
 
-        <button @click=" //@ts-ignore
-          updateCartItemWrapper(resultJson.result.id, cartState.cart.findIndex(v => v.itemId === resultJson.result.id) === -1 ? 1 : cartState.cart.find(v => v.itemId === resultJson.result.id).quantity + 1
-          )"> add to cart </button>
+        <button @click="addOne(resultJson.result.id)"> add to cart </button>
       </table>
 
     </div>
@@ -79,7 +107,5 @@ getData();
     <p>loading</p>
   </template>
 </template>
-<style>
-
-</style>
+<style></style>
 
