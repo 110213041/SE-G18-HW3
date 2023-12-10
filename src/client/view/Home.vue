@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 
 const isLoading = ref(true);
@@ -13,23 +13,30 @@ type item = {
   owner_name: string;
 };
 
+type dbResponse = item & { state: number };
+
 let itemArray: item[] = [];
 
-function getData() {
+async function getData() {
+  isLoading.value = true
+
   const queryUrl = new URL(location.origin);
   queryUrl.pathname = "/api/item";
   queryUrl.searchParams.set("a", "getall");
 
-  fetch(queryUrl.href)
-    .then(res => res.json())
-    .then(res => {
-      itemArray = res.filter(v => v.state === 1);
-      isLoading.value = false
-    })
+  try {
+    const resp = await fetch(queryUrl.href);
+    const respJson: dbResponse[] = await resp.json();
+
+    itemArray = respJson.filter(v => v.state === 1);
+  } catch (e) {
+    console.error(e)
+  }
+
+  isLoading.value = false
 }
 
-getData()
-
+onMounted(getData)
 
 </script>
 
@@ -37,7 +44,7 @@ getData()
   <h2>This is Home</h2>
   <template v-if="!isLoading">
     <div id="item-list-wrapper" v-if="itemArray.length > 0">
-      <div class="item-wrapper" >
+      <div class="item-wrapper">
         <table>
           <thead>
             <tr>
@@ -49,11 +56,12 @@ getData()
 
           <tbody v-for="currentItem in itemArray">
             <td>{{ currentItem.display_name }}</td>
-            <td>{{currentItem.price }}</td>
-            <td><RouterLink :to=" //@ts-ignore
-              `/item/${currentItem.id}`">to item</RouterLink></td>
+            <td>{{ currentItem.price }}</td>
+            <td>
+              <RouterLink :to="`/item/${currentItem.id}`">to item</RouterLink>
+            </td>
 
-            </tbody>
+          </tbody>
         </table>
       </div>
     </div>

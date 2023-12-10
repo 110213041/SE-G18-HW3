@@ -125,10 +125,20 @@ export default async function apiController(req: Request): Promise<Response> {
         });
       } else if (itemActon === "alter") {
         if (req.headers.get("content-type") !== "application/json") break;
+
+        if (req.method !== "POST") {
+          return new Response(JSON.stringify({ status: 400 }), {
+            status: 400,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
         type alterSchema = {
-          id: number;
-          state?: number;
-          price?: number;
+          id: string;
+          state?: string;
+          price?: string;
           display_name?: string;
           description?: string;
         };
@@ -149,8 +159,10 @@ export default async function apiController(req: Request): Promise<Response> {
           });
         }
 
-        const price = requestJson.price;
-        console.log(`Number.isInteger(price) ${Number.isInteger(price)}`);
+        const price: string = requestJson.price ?? "";
+        console.log(
+          `Number.isInteger(price) ${Number.isInteger(parseInt(price))}`,
+        );
         if (Number.isInteger(price)) {
           database.query(`UPDATE item SET "price" = ? WHERE "id" = ? `, [
             price,
@@ -164,7 +176,7 @@ export default async function apiController(req: Request): Promise<Response> {
           });
         }
 
-        if (requestJson.display_name !== null) {
+        if (requestJson.display_name !== undefined) {
           database.query(`UPDATE item SET "display_name" = ? WHERE "id" = ? `, [
             requestJson.display_name,
             requestJson.id,
@@ -177,7 +189,7 @@ export default async function apiController(req: Request): Promise<Response> {
           });
         }
 
-        if (requestJson.description !== null) {
+        if (requestJson.description !== undefined) {
           database.query(`UPDATE item SET "description" = ? WHERE "id" = ? `, [
             requestJson.description,
             requestJson.id,
@@ -191,6 +203,16 @@ export default async function apiController(req: Request): Promise<Response> {
         }
       } else if (itemActon === "create") {
         if (req.headers.get("content-type") !== "application/json") break;
+
+        if (req.method !== "POST") {
+          return new Response(JSON.stringify({ status: 400 }), {
+            status: 400,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
         type createSchema = {
           owner_id: number;
           display_name: string;
