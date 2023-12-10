@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { updateCartItem } from "../controller/cart";
 import { cart } from "../model/global_state";
-import { ref, type Ref } from "vue";
+import { ref, type Ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -45,23 +45,25 @@ function addOne(id: number) {
   updateCartItem(id, cart.value[targetIndex].quantity + 1);
 }
 
-function getData() {
+async function getData() {
+  isLoading.value = false;
+
   const queryUrl = new URL(location.origin);
   queryUrl.pathname = "/api/item";
   queryUrl.searchParams.set("q", id);
 
-  fetch(queryUrl.href)
-    .then(res => res.json())
-    .then(res => {
-      resultJson.value = res;
-      isLoading.value = false;
-    })
-    .catch(e => {
-      console.error(e)
-    })
+  try {
+    const resp = await fetch(queryUrl.href)
+    const respJson: dbResponse = await resp.json()
+    resultJson.value = respJson
+  } catch (e) {
+    console.error(e)
+  }
+
+  isLoading.value = false;
 }
 
-getData();
+onMounted(getData)
 </script>
 
 
