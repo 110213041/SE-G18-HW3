@@ -1,6 +1,9 @@
 import { type Ref, ref, watch } from "vue";
 import { cart, type cartItem } from "../model/global_state";
 
+/**
+ * Database return schema
+ */
 type item = {
   id: number;
   display_name: string;
@@ -10,6 +13,9 @@ type item = {
   state: number;
 };
 
+/**
+ * Type for display in cart table
+ */
 type itemInfo = Pick<cartItem, "quantity"> & Omit<item, "state">;
 
 export const isShow = ref(false);
@@ -20,6 +26,10 @@ export function toggleShow() {
   isShow.value = isShow.value ? false : true;
 }
 
+/**
+ * Modify item quality in cart
+ * @param quantity should pass the final quantity
+ */
 export function updateCartItem(id: number, quantity: number) {
   if (quantity < 1) quantity = 1;
 
@@ -39,6 +49,9 @@ export function updateCartItem(id: number, quantity: number) {
   updateCartDetailInfo();
 }
 
+/**
+ * Remove item from cart
+ */
 export function removeCartItem(id: number) {
   cart.value = cart.value.filter((v) => v.itemId !== id);
   cart.value.sort((a, b) => a.itemId - b.itemId);
@@ -46,6 +59,9 @@ export function removeCartItem(id: number) {
   updateCartDetailInfo();
 }
 
+/**
+ * Update cartDetailItem info and calculate the totalCost
+ */
 async function updateCartDetailInfo() {
   const links = [...cart.value].map((v) => {
     const url = new URL(location.origin);
@@ -107,6 +123,9 @@ async function updateCartDetailInfo() {
   );
 }
 
+/**
+ * Init cart data.
+ */
 export function initCart() {
   let localCart = localStorage.getItem("cart_state");
 
@@ -117,13 +136,3 @@ export function initCart() {
 
   cart.value = JSON.parse(localCart);
 }
-
-watch(cart, () => {
-  console.log("cart");
-  console.log(cart.value);
-});
-
-watch(cartDetailItem, () => {
-  console.log("cartDetailItem");
-  console.log(cartDetailItem.value);
-});
