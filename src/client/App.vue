@@ -16,8 +16,18 @@ import Cart from './components/Cart.vue';
 </template>
 
 <style>
+/* 
+* Content box and Border box will change how box size work. 
+* DO NOT CHANGE.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 nav {
   display: flex;
-  gap: 10px; 
+  gap: 10px;
 }
 </style>
