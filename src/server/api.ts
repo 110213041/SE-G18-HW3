@@ -125,6 +125,16 @@ export default async function apiController(req: Request): Promise<Response> {
         });
       } else if (itemActon === "alter") {
         if (req.headers.get("content-type") !== "application/json") break;
+
+        if (req.method !== "POST") {
+          return new Response(JSON.stringify({ status: 400 }), {
+            status: 400,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
         type alterSchema = {
           id: string;
           state?: string;
@@ -193,6 +203,16 @@ export default async function apiController(req: Request): Promise<Response> {
         }
       } else if (itemActon === "create") {
         if (req.headers.get("content-type") !== "application/json") break;
+
+        if (req.method !== "POST") {
+          return new Response(JSON.stringify({ status: 400 }), {
+            status: 400,
+            headers: {
+              "content-type": "application/json",
+            },
+          });
+        }
+
         type createSchema = {
           owner_id: number;
           display_name: string;
