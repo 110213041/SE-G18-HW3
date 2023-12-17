@@ -67,3 +67,54 @@ onMounted(getData)
     </div>
   </template>
 </template>
+<style scoped>
+/* styles.css */
+
+/* Reset some default margin and padding */
+body, h2, table {
+  margin: 0;
+  padding: 0;
+}
+
+/* Style for the item list wrapper */
+#item-list-wrapper {
+  margin-top: 20px;
+}
+
+/* Style for the item wrapper */
+.item-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Style for the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+/* Style for table headers */
+th {
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+/* Style for table cells */
+td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+/* Style for the "to item" link */
+td a {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  background-color: #4CAF50;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+</style>
