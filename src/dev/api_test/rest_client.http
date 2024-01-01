@@ -1,0 +1,29 @@
+### Login
+POST http://127.0.0.1:8000/api/account/login
+content-type: application/json
+
+{
+  "name": "new_account",
+  "password": "testing132"
+}
+
+### Register
+
+POST http://127.0.0.1:8000/api/account/register
+content-type: application/json
+
+{
+  "name": "new_account",
+  "email": "new@example.com",
+  "password": "testing132"
+}
+
+### Info
+
+POST http://127.0.0.1:8000/api/account/info
+content-type: application/json
+
+{
+  "id": 4,
+  "session": "5c1d5f08-5b51-4d38-9109-401806893024"
+}

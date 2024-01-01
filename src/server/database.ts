@@ -8,7 +8,7 @@ const pragma = `--sql
     PRAGMA foreign_keys = ON;
 `;
 
-export type member = {
+export type member_db = {
   id: number;
   user_name: string;
   email: string;
@@ -30,7 +30,33 @@ const memberSchema = `--sql
     ('seller2', 'seller2@example.com', 'seller2');
 `;
 
-export type item = {
+export type session_db = {
+  user_id: number;
+  session_id: string;
+  life_time: string;
+};
+
+const sessionSchema = `--sql
+  CREATE TABLE session (
+    "user_id" INTEGER NOT NULL,
+    "session" TEXT NOT NULL,
+    "life_time" TEXT NOT NULL,
+    FOREIGN KEY ("user_id") REFERENCES member(id)
+  )
+`;
+
+const memberRoleSchema = `--sql
+  CREATE TABLE member_role (
+    "user_id" INTEGER NOT NULL,
+    "role" INTEGER CHECK("role" IN (1, 2)) NOT NULL,
+    FOREIGN KEY ("user_id") REFERENCES member(id)
+  );
+
+  INSERT INTO member_role ("user_id", "role")
+  VALUES (2, 1), (3, 1);
+`;
+
+export type item_db = {
   id: number;
   display_name: string;
   price: number;
@@ -58,7 +84,6 @@ const itemSchema = `--sql
 
 database.execute(pragma);
 database.execute(memberSchema);
+database.execute(sessionSchema);
+database.execute(memberRoleSchema);
 database.execute(itemSchema);
-
-// database.transaction(() => {
-// });
