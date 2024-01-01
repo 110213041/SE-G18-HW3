@@ -1,0 +1,89 @@
+/account
+  /login
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          name: string
+          password: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "login_response"
+          content: {
+            user_info: number
+            session: string
+            life_time: number (unix timestamp)
+          }
+        }
+
+      Fail:
+        HTTP status: 
+          400 (Wrong http method, wrong content type)
+          403 (username or password mismatch)
+
+  /register
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          name: string
+          email: string
+          password: string
+        }
+
+    Response:
+      Success:
+        HTTP status:
+          201 (Account Create)
+
+      Fail:
+        HTTP status: 
+          400 (Wrong http method, wrong content type)
+          403 (Account already exist)
+  /info
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "user_info"
+          content: {
+            name: string
+            email: string
+            role: {
+              seller: boolean
+              shipper: boolean
+            }
+          }
+        }
+      
+      Fail:
+        HTTP status:
+          400 (Wrong http method, wrong content type)
+          403 (id or session incorrect)
+
+  /cart
+    W.I.P
+
+
+W.I.P
+/item
+  /get
+  /get_all
+  /create
+  /alter
