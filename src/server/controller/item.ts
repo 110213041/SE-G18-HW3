@@ -1,5 +1,5 @@
 import { statusResponse } from "../util.ts";
-import { database, type item_db } from "../database.ts";
+import { database, type item_db } from "../model/database.ts";
 
 function getItem(id: number) {
   console.log(`INFO: item id: ${id}`);

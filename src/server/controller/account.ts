@@ -1,11 +1,5 @@
-import {
-  getFirstPath,
-  getRequestBody,
-  isPostJson,
-  responseTemplate,
-  statusResponse,
-} from "../util.ts";
-import { database } from "../database.ts";
+import * as util from "../util.ts";
+import * as DB from "../model/database.ts";
 
 type login_request = {
   name: string;
@@ -13,8 +7,8 @@ type login_request = {
 };
 
 function loginProcess(name: string, password: string) {
-  return database.transaction(() => {
-    const query = database.prepareQuery(`--sql
+  return DB.database.transaction(() => {
+    const query = DB.database.prepareQuery(`--sql
       SELECT "id" FROM member WHERE
         "user_name" = ? 
         AND "password" = ?
@@ -29,7 +23,7 @@ function loginProcess(name: string, password: string) {
     const newSessionId = crypto.randomUUID();
     const lifeTime = Date.now() + 60 * 60 * 24 * 365 * 1000;
 
-    database.prepareQuery(`--sql
+    DB.database.prepareQuery(`--sql
       INSERT INTO "session" ("user_id", "session", "life_time")
       VALUES (?, ?, ?)
     `).execute([userId, newSessionId, lifeTime]);
@@ -43,18 +37,20 @@ function loginProcess(name: string, password: string) {
 }
 
 async function loginHandler(req: Request) {
-  if (isPostJson(req)) return statusResponse(400);
+  if (util.isPostJson(req)) return util.statusResponse(400);
 
   try {
-    const loginRequest: login_request = JSON.parse(await getRequestBody(req));
+    const loginRequest: login_request = JSON.parse(
+      await util.getRequestBody(req),
+    );
 
     const loginResult = loginProcess(loginRequest.name, loginRequest.password);
 
     if (loginResult === null) {
-      return statusResponse(403);
+      return util.statusResponse(403);
     }
 
-    return responseTemplate({
+    return util.responseTemplate({
       type: "login_response",
       content: {
         user_id: loginResult.user_id,
@@ -64,7 +60,7 @@ async function loginHandler(req: Request) {
     }, 200);
   } catch (e) {
     console.error(e);
-    return statusResponse(500);
+    return util.statusResponse(500);
   }
 }
 
@@ -75,8 +71,8 @@ type register_request = {
 };
 
 function registerProcess(payload: register_request) {
-  return database.transaction(() => {
-    const query = database.prepareQuery(`--sql
+  return DB.database.transaction(() => {
+    const query = DB.database.prepareQuery(`--sql
       SELECT id FROM member WHERE user_name = ? OR email = ?
     `);
 
@@ -85,7 +81,7 @@ function registerProcess(payload: register_request) {
       return false;
     }
 
-    database.prepareQuery(`--sql
+    DB.database.prepareQuery(`--sql
       INSERT INTO member ("user_name", "email", "password")
       VALUES (?, ?, ?)
     `).execute([payload.name, payload.email, payload.password]);
@@ -95,27 +91,27 @@ function registerProcess(payload: register_request) {
 }
 
 async function registerHandler(req: Request) {
-  if (isPostJson(req)) return statusResponse(400);
+  if (util.isPostJson(req)) return util.statusResponse(400);
 
   try {
     const registerRequest: register_request = JSON.parse(
-      await getRequestBody(req),
+      await util.getRequestBody(req),
     );
 
     if (
       registerRequest.name === undefined ||
       registerRequest.email === undefined ||
       registerRequest.password === undefined
-    ) return statusResponse(400);
+    ) return util.statusResponse(400);
 
     if (registerProcess(registerRequest)) {
-      return statusResponse(201);
+      return util.statusResponse(201);
     } else {
-      return statusResponse(403);
+      return util.statusResponse(403);
     }
   } catch (e) {
     console.error(e);
-    return statusResponse(500);
+    return util.statusResponse(500);
   }
 }
 
@@ -124,8 +120,8 @@ type info_request = {
   session: string;
 };
 
-function isSessionValid(id: number, session: string): boolean {
-  const result = database.prepareQuery<[number, number]>(
+export function isSessionValid(id: number, session: string): boolean {
+  const result = DB.database.prepareQuery<[number, number]>(
     `SELECT user_id, life_time FROM "session" WHERE "session" = ?`,
   ).first([session]);
   if (result === undefined) {
@@ -142,11 +138,11 @@ function isSessionValid(id: number, session: string): boolean {
 }
 
 function infoProcess(id: number) {
-  const [name, email] = database.prepareQuery<[string, string]>(
+  const [name, email] = DB.database.prepareQuery<[string, string]>(
     `SELECT user_name, email FROM member WHERE id = ?`,
   ).first([id])!;
 
-  const roleString = database.prepareQuery<[string]>(
+  const roleString = DB.database.prepareQuery<[string]>(
     `SELECT GROUP_CONCAT("role") FROM member_role WHERE user_id = ? GROUP BY user_id`,
   ).first([id]);
 
@@ -169,32 +165,34 @@ function infoProcess(id: number) {
 }
 
 async function infoHandler(req: Request) {
-  if (isPostJson(req)) return statusResponse(400);
+  if (util.isPostJson(req)) return util.statusResponse(400);
 
   try {
-    const infoRequest: info_request = JSON.parse(await getRequestBody(req));
+    const infoRequest: info_request = JSON.parse(
+      await util.getRequestBody(req),
+    );
     if (
       infoRequest.id === undefined ||
       infoRequest.session === undefined
-    ) return statusResponse(403);
+    ) return util.statusResponse(403);
 
     if (!isSessionValid(infoRequest.id, infoRequest.session)) {
-      return statusResponse(403);
+      return util.statusResponse(403);
     }
 
-    return responseTemplate({
+    return util.responseTemplate({
       type: "user_info",
       content: infoProcess(infoRequest.id),
     }, 200);
   } catch (e) {
     console.error(e);
-    return statusResponse(500);
+    return util.statusResponse(500);
   }
 }
 
 export function accountHandler(req: Request) {
   const url = new URL(req.url);
-  const pathName = getFirstPath(url.pathname.replace("/api/account", ""));
+  const pathName = util.getFirstPath(url.pathname.replace("/api/account", ""));
   console.log(`INFO: /account path: ${pathName}`);
 
   switch (pathName) {
@@ -208,6 +206,6 @@ export function accountHandler(req: Request) {
       return infoHandler(req);
 
     default:
-      return statusResponse(400);
+      return util.statusResponse(400);
   }
 }
