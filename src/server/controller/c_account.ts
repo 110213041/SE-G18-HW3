@@ -1,5 +1,4 @@
 import * as util from "../util.ts";
-import * as DB from "../model/database.ts";
 import * as AccountModel from "../model/m_account.ts";
 type login_request = {
   name: string;
