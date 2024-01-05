@@ -1,5 +1,5 @@
-import { itemHandler } from "./controller/item.ts";
-import { accountHandler } from "./controller/account.ts";
+import { itemHandler } from "./controller/c_item.ts";
+import { accountHandler } from "./controller/c_account.ts";
 import { getFirstPath, statusResponse } from "./util.ts";
 
 export default function apiController(
