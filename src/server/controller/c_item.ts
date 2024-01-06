@@ -1,3 +1,5 @@
+/** Deprecate API, Do Not Use */
+
 import { statusResponse } from "../util.ts";
 import { database, type item_db } from "../model/database.ts";
 
