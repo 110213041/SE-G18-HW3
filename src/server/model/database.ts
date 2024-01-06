@@ -82,8 +82,25 @@ const itemSchema = `--sql
     ('good1', 50, 'This is Good1.', 2, 1), ('good2', 120, 'This is Good2.',2, 1), ('good3', 30, 'This is Good3', 3, 1);
 `;
 
+export type cart_db = {
+  user_id: number;
+  cart: Array<{
+    item_id: number;
+    quantity: number;
+  }>;
+};
+
+const cartSchema = `--sql
+    CREATE TABLE cart (
+      "user_id" INTEGER NOT NULL,
+      "cart" TEXT NOT NULL,
+      FOREIGN KEY ("user_id") REFERENCES member(id)
+    )
+`;
+
 database.execute(pragma);
 database.execute(memberSchema);
 database.execute(sessionSchema);
 database.execute(memberRoleSchema);
 database.execute(itemSchema);
+database.execute(cartSchema);
