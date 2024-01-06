@@ -42,7 +42,7 @@ export async function getRequestBody(req: Request) {
   return decoder.decode(bodyReader?.value);
 }
 
-export function isPostJson(req: Request): boolean {
-  return req.method !== "POST" ||
-    req.headers.get("content-type") !== "application/json";
+export function isMethodJson(req: Request, method: "GET" | "POST"): boolean {
+  return req.method === method ||
+    req.headers.get("content-type") === "application/json";
 }

@@ -87,7 +87,7 @@ export function createNewSession(userId: number) {
   };
 }
 
-export function isSessionValid(id: number, session: string): boolean {
+export function isSessionValid(session: string, id?: number): boolean {
   const query = DB.database.prepareQuery<
     never,
     { user_id: number; life_time: number },
@@ -103,7 +103,12 @@ export function isSessionValid(id: number, session: string): boolean {
     return false;
   }
 
-  return (result.user_id === id && (Date.now() + 60 * 1000 < result.life_time));
+  if (id === undefined) {
+    return true;
+  } else {
+    return (result.user_id === id &&
+      (Date.now() + 60 * 1000 < result.life_time));
+  }
 }
 
 export function getUserById(id: number) {

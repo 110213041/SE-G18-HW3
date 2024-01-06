@@ -6,7 +6,7 @@ type login_request = {
 };
 
 async function loginHandler(req: Request) {
-  if (util.isPostJson(req)) return util.statusResponse(400);
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(400);
 
   try {
     const loginRequest: login_request = JSON.parse(
@@ -56,7 +56,7 @@ function registerProcess(payload: register_request) {
 }
 
 async function registerHandler(req: Request) {
-  if (util.isPostJson(req)) return util.statusResponse(400);
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(400);
 
   try {
     const registerRequest: register_request = JSON.parse(
@@ -101,7 +101,7 @@ function infoProcess(id: number) {
 }
 
 async function infoHandler(req: Request) {
-  if (util.isPostJson(req)) return util.statusResponse(400);
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(400);
 
   try {
     const infoRequest: info_request = JSON.parse(
@@ -112,7 +112,7 @@ async function infoHandler(req: Request) {
       infoRequest.session === undefined
     ) return util.statusResponse(403);
 
-    if (!AccountModel.isSessionValid(infoRequest.id, infoRequest.session)) {
+    if (!AccountModel.isSessionValid(infoRequest.session, infoRequest.id)) {
       return util.statusResponse(403);
     }
 
