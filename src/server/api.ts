@@ -1,21 +1,25 @@
 /** Deprecate API, Do Not Use */
 import { itemHandler } from "./controller/c_item.ts";
 
-import { itemsHandler } from "./controller/c_items.ts";
 import { accountHandler } from "./controller/c_account.ts";
-import { getFirstPath, statusResponse } from "./util.ts";
+import { itemsHandler } from "./controller/c_items.ts";
+import { cartHandler } from "./controller/c_cart.ts";
+import * as util from "./util.ts";
 
 export default function apiController(
   req: Request,
 ): Promise<Response> | Response {
   const url = new URL(req.url);
   console.log(`GET: /api call`);
-  const pathName = getFirstPath(url.pathname.replace("/api", ""));
+  const pathName = util.getFirstPath(url.pathname.replace("/api", ""));
   console.log(`INFO: api path: ${pathName}`);
 
   switch (pathName) {
     case "/account":
       return accountHandler(req);
+
+    case "/cart":
+      return cartHandler(req);
 
     case "/items":
       return itemsHandler(req);
@@ -26,5 +30,5 @@ export default function apiController(
   }
 
   // default response
-  return statusResponse(400);
+  return util.statusResponse(400);
 }

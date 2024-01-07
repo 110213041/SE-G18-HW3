@@ -27,7 +27,7 @@ async function getHandler(req: Request) {
 }
 
 function allHandler(req: Request) {
-  if (!util.isMethodJson(req, "GET")) return util.statusResponse(405);
+  if (req.method !== "GET") return util.statusResponse(405);
 
   try {
     return util.responseTemplate({

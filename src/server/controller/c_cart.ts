@@ -27,7 +27,7 @@ async function getHandler(req: Request) {
 
     return util.responseTemplate({
       type: "cart",
-      content: cart,
+      content: JSON.parse(cart.cart),
     }, 200);
   } catch (e) {
     console.error(e);
