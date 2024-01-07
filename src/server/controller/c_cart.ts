@@ -142,7 +142,7 @@ export async function cartHandler(req: Request) {
 
   try {
     const session = ControlUtil.getSession(await util.getRequestBody(req));
-    if (session === undefined || AccountModel.isSessionValid(session)) {
+    if (session === undefined || !AccountModel.isSessionValid(session)) {
       return util.statusResponse(403);
     }
   } catch (e) {
