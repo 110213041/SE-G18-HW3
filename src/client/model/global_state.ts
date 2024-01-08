@@ -16,10 +16,19 @@ export type info = {
 };
 export const cart: Ref<cartItem[]> = ref([]);
 // export const userInfo = ref(0);
-export const username = ref('');
-export const password = ref('');
-export const email = ref('');
+export const username = ref("");
+export const password = ref("");
+export const email = ref("");
 export const userId = ref(0);
-export const session = ref('');
-export const userInfo: Ref<number> = ref(0);
+export const session = ref("");
+export const userInfo: Ref<
+  {
+    email: string;
+    user_name: string;
+    role: {
+      seller: boolean;
+      shipper: boolean;
+    };
+  } | undefined
+> = ref();
 // export const password = ref('');

@@ -12,7 +12,6 @@ import Cart from './components/Cart.vue';
     <router-link to="/register">register</router-link>
     <router-link to="/about">About</router-link>
     <router-link to="/seller">Seller</router-link>
-    <router-link to="/info">Info</router-link>
   </nav>
   <RouterView></RouterView>
 </template>

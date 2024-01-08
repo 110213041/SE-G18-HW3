@@ -7,7 +7,6 @@ import ItemVue from "../view/Item.vue";
 import SellerVue from "../view/Seller.vue";
 import loginVue from "../view/login.vue";
 import registerVue from "../view/register.vue";
-import InfoVue from "../view/Info.vue";
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -17,8 +16,7 @@ export const router = createRouter({
     { path: "/item/:id", component: ItemVue },
     { path: "/seller", component: SellerVue },
     { path: "/login", component: loginVue },
-    { path: "/register", component: registerVue},
-    { path: "/Info", component:InfoVue},
+    { path: "/register", component: registerVue },
     { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundVue },
   ],
 });

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { username, password, email,userId,session,userInfo} from "../model/global_state";
+import { username, password, email, userId, session, userInfo } from "../model/global_state";
 // 全域狀態管理使用者輸入的數據
 //const username = ref('');
 //const password = ref('');
@@ -12,7 +12,7 @@ const router = useRouter();
 // 登入方法
 const login = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/account/login', {
+    const response = await fetch(`${window.location.origin}/api/account/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -31,14 +31,14 @@ const login = async () => {
         console.log('Login successful:', data.content);
 
         // 將 user_info 和 session 存儲到相應的變數中
-        userId.value = data.content.user_info;
+        userId.value = data.content.user_id;
         session.value = data.content.session;
         console.log('data:', data);
         console.log('data.content:', data.content);
-        console.log('data.content.user_info:', data.content.user_info);
+        console.log('data.content.user_id:', data.content.user_id);
 
         // 使用 user_info 和 session 去取得用戶資訊
-        const infoResponse = await fetch('http://127.0.0.1:8000/api/account/info', {
+        const infoResponse = await fetch(`${window.location.origin}/api/account/info`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -60,6 +60,8 @@ const login = async () => {
             // 在這裡你可以處理用戶資訊，顯示 role
             const role = userInfoData.content.role;
             console.log('Role:', role);
+
+            userInfo.value = userInfoData.content
           } else {
             console.error('Unexpected response type:', userInfoData.type);
           }
@@ -97,7 +99,11 @@ const goToRegister = () => {
 
 
 <template>
-  <div>
+  <template v-if="userInfo !== undefined">
+    <div>hello: {{ userInfo.user_name }}</div>
+  </template>
+
+  <div v-else>
     <h2>Login Page</h2>
 
     <label for="username">Username:</label>
@@ -107,7 +113,7 @@ const goToRegister = () => {
     <input v-model="password" type="password" id="password" />
 
     <button @click="login">Login</button>
-    
+
     <router-link to="/register">Go to Regist</router-link>
   </div>
 </template>
@@ -157,5 +163,4 @@ button {
 button:hover {
   background-color: #45a049;
 }
-
 </style>
