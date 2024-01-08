@@ -4,7 +4,7 @@ import * as AccountModel from "../model/m_account.ts";
 import * as CartModel from "../model/m_cart.ts";
 
 type get_request = {
-  id: number;
+  user_id: number;
   session: string;
 };
 
@@ -14,13 +14,13 @@ async function getHandler(req: Request) {
   try {
     const getRequest: get_request = JSON.parse(await util.getRequestBody(req));
 
-    let cart = CartModel.getCart(getRequest.id);
+    let cart = CartModel.getCart(getRequest.user_id);
 
-    if (cart === undefined && !CartModel.createCart(getRequest.id)) {
+    if (cart === undefined && !CartModel.createCart(getRequest.user_id)) {
       return util.statusResponse(500);
     }
 
-    cart = CartModel.getCart(getRequest.id);
+    cart = CartModel.getCart(getRequest.user_id);
     if (cart === undefined) {
       return util.statusResponse(500);
     }
@@ -136,7 +136,7 @@ async function cleanHandler(req: Request) {
 }
 
 type checkout_request = {
-  id: number;
+  user_id: number;
   session: number;
 };
 
@@ -148,9 +148,10 @@ async function checkoutHandler(req: Request) {
       await util.getRequestBody(req),
     );
 
-    const orderId = CartModel.checkoutCart(checkoutRequest.id);
+    const orderId = CartModel.checkoutCart(checkoutRequest.user_id);
 
     if (orderId > 0) {
+      CartModel.updateCart(checkoutRequest.user_id, JSON.stringify([]));
       return util.responseTemplate({
         type: "checkout",
         content: {

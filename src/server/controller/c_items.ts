@@ -3,7 +3,7 @@ import * as ItemsModel from "../model/m_items.ts";
 import * as AccountModel from "../model/m_account.ts";
 
 type get_request = {
-  id: number;
+  user_id: number;
   session: number;
   item_id: number;
 };
@@ -41,7 +41,7 @@ function allHandler(req: Request) {
 }
 
 type alter_request = {
-  id: number;
+  user_id: number;
   session: string;
   item_id: number;
   attribute: ItemsModel.item_key;
@@ -56,7 +56,9 @@ async function alterHandler(req: Request) {
       await util.getRequestBody(req),
     );
 
-    if (!AccountModel.isSessionValid(alterRequest.session, alterRequest.id)) {
+    if (
+      !AccountModel.isSessionValid(alterRequest.session, alterRequest.user_id)
+    ) {
       return util.statusResponse(403);
     }
 
