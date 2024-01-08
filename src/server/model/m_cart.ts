@@ -130,7 +130,7 @@ export function checkoutCart(id: number) {
     }
 
     if (item.state !== 1) {
-      return -1;
+      return -2;
     }
 
     if (!sellerGroup.has(item.owner_id)) {
@@ -157,22 +157,23 @@ export function checkoutCart(id: number) {
         if (ShippingModel.createShipping({ ...v, ship_status: 0 })) {
           shipIdArray.push(ShippingModel.getLastShipId()!.id);
         } else {
-          shipIdArray.push(-1);
+          shipIdArray.push(-3);
         }
       });
     });
 
-    if (shipIdArray.filter((v) => v === -1).length > 0) {
-      return -1;
+    if (shipIdArray.filter((v) => v < 0).length > 0) {
+      return -4;
     }
+    return shipIdArray.length;
   });
 
-  if (!createShippingOrder) return -1;
+  if (createShippingOrder < 0) return -10;
 
   const shoppingId = DB.database.transaction(() => {
     try {
       const shoppingOrder = ShoppingModel.createShoppingOrder(id);
-      if (shoppingOrder === -1) return -1;
+      if (shoppingOrder === -1) return -5;
 
       shipIdArray.forEach((v) => {
         ShoppingModel.linkShipRelation(shoppingOrder.id, v);
@@ -181,7 +182,7 @@ export function checkoutCart(id: number) {
       return shoppingOrder.id;
     } catch (e) {
       console.error(e);
-      return -1;
+      return -6;
     }
   });
 
