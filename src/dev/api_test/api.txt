@@ -17,7 +17,7 @@
         {
           type: "login_response"
           content: {
-            user_info: number
+            user_id: number
             session: string
             life_time: number (unix timestamp)
           }
