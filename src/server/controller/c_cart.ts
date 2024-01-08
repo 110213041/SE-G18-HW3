@@ -168,10 +168,17 @@ async function checkoutHandler(req: Request) {
       await util.getRequestBody(req),
     );
 
+    const cartStr = CartModel.getCart(checkoutRequest.user_id)?.cart;
+    if (cartStr === undefined || JSON.parse(cartStr).length < 1) {
+      return util.statusResponse(400);
+    }
+
     const orderId = CartModel.checkoutCart(checkoutRequest.user_id);
 
-    if (orderId > 0) {
-      CartModel.updateCart(checkoutRequest.user_id, JSON.stringify([]));
+    if (
+      orderId > 0 &&
+      CartModel.updateCart(checkoutRequest.user_id, JSON.stringify([]))
+    ) {
       return util.responseTemplate({
         type: "checkout",
         content: {
@@ -179,6 +186,7 @@ async function checkoutHandler(req: Request) {
         },
       }, 200);
     } else {
+      console.log(`${orderId}???`);
       return util.statusResponse(500);
     }
   } catch (e) {
@@ -187,25 +195,10 @@ async function checkoutHandler(req: Request) {
   }
 }
 
-export async function cartHandler(req: Request) {
+export function cartHandler(req: Request) {
   const url = new URL(req.url);
   const pathName = util.getFirstPath(url.pathname.replace("/api/cart", ""));
   console.log(`INFO: /cart path: ${pathName}`);
-
-  // try {
-  //   // const session = ControlUtil.getSession(await util.getRequestBody(req));
-  //   const reqObj = JSON.parse(await util.getRequestBody(req));
-  //   console.log(reqObj);
-  //   if (
-  //     reqObj === undefined ||
-  //     !AccountModel.isSessionValid(reqObj.session)
-  //   ) {
-  //     return util.statusResponse(403);
-  //   }
-  // } catch (e) {
-  //   console.error(e);
-  //   return util.statusResponse(400);
-  // }
 
   switch (pathName) {
     case "/get":
