@@ -135,6 +135,37 @@ async function cleanHandler(req: Request) {
   }
 }
 
+type checkout_request = {
+  id: number;
+  session: number;
+};
+
+async function checkoutHandler(req: Request) {
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(405);
+
+  try {
+    const checkoutRequest: checkout_request = JSON.parse(
+      await util.getRequestBody(req),
+    );
+
+    const orderId = CartModel.checkoutCart(checkoutRequest.id);
+
+    if (orderId > 0) {
+      return util.responseTemplate({
+        type: "checkout",
+        content: {
+          order_id: orderId,
+        },
+      }, 200);
+    } else {
+      return util.statusResponse(500);
+    }
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(500);
+  }
+}
+
 export async function cartHandler(req: Request) {
   const url = new URL(req.url);
   const pathName = util.getFirstPath(url.pathname.replace("/api/cart", ""));
@@ -142,7 +173,7 @@ export async function cartHandler(req: Request) {
 
   try {
     const session = ControlUtil.getSession(await util.getRequestBody(req));
-    if (session === undefined || AccountModel.isSessionValid(session)) {
+    if (session === undefined || !AccountModel.isSessionValid(session)) {
       return util.statusResponse(403);
     }
   } catch (e) {
@@ -159,6 +190,8 @@ export async function cartHandler(req: Request) {
       return delHandler(req);
     case "/clean":
       return cleanHandler(req);
+    case "/checkout":
+      return checkoutHandler(req);
     default:
       return util.statusResponse(400);
   }
