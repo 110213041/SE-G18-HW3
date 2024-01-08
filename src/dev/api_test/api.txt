@@ -1,0 +1,262 @@
+/account
+  /login
+
+    Login and get user id and session.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          name: string
+          password: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "login_response"
+          content: {
+            user_id: number
+            session: string
+            life_time: number (unix timestamp)
+          }
+        }
+
+      Fail:
+        HTTP status: 
+          400 (Wrong http method, wrong content type)
+          403 (username or password mismatch)
+
+  /register
+
+    Resituate a new user.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          name: string
+          email: string
+          password: string
+        }
+
+    Response:
+      Success:
+        HTTP status:
+          201 (Account Create)
+
+      Fail:
+        HTTP status: 
+          400 (Wrong http method, wrong content type)
+          403 (Account already exist)
+  /info
+
+    Get user own info.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "user_info"
+          content: {
+            name: string
+            email: string
+            role: {
+              seller: boolean
+              shipper: boolean
+            }
+          }
+        }
+      
+      Fail:
+        HTTP status:
+          400 (Wrong http method, wrong content type)
+          403 (id or session incorrect)
+
+/cart
+  /get
+
+    Getting custom cart.
+
+    Request:
+      Method: GET
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "cart"
+          content: Array<{
+            item_id: number
+            quantity: number
+          }>
+        }
+      
+      Fail:
+        405 Wrong method or not providing id and session.
+
+  /set
+
+    Modify custom cart (cannot remove).
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_id: number
+          quantity: number
+        }
+    
+    Response:
+      Success:
+        Same as "/cart/get"
+
+      Fail:
+        405 Wrong method or not providing id and session.
+
+  /del
+
+    Remove item from custom cart.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_id: number
+        }
+
+    Response:
+      Success:
+        Same as "/cart/get"
+
+      Fail:
+        405 Wrong method or not providing id and session.
+
+  /clean
+
+    Reset custom cart back to empty array.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+        }
+
+    Response:
+      Success:
+        Same as "/cart/get"
+
+      Fail:
+        405 Wrong method or not providing id and session.
+
+/items (有 s)
+  /get
+    
+    Get one item info.
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_id: number
+        }
+
+    Response:
+      Success:
+        {
+          type: "items",
+          content: {
+            item_id: number
+            display_name: string
+            price: number;
+            description: string
+            owner_id: number
+            state: number
+          }
+        }
+
+      Fail:
+        404 No item have that item_id.
+        405 Wrong method or not providing id and session.
+
+  /all
+
+    Get All items in database.
+
+    Request:
+      Method: GET
+
+    Response:
+      Success:
+        {
+          type: "items_all"
+          content: Array<{
+            item_id: number
+            display_name: string
+            price: number;
+            description: string
+            owner_id: number
+            state: number
+          }>
+        }
+        
+      Fail:
+        405 Wrong method or not providing id and session.
+
+  /alter
+    Modify item status
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_id: number
+          attribute: "state" | "price" | "display_name" | "description"
+          value:       0 / 1 |  number |     string     |    string
+        }
+
+    Response:
+      Success:
+        HTTP status 200
+
+      Fail:
+        400 Wrong attribute.
+        403 Auth Fail.
+        405  Wrong method or not providing id and session.
+
+/** Deprecate API, Do Not Use */
+/item (沒有 s)
+  /get
+  /get_all
+  /create
+  /alter
