@@ -121,7 +121,7 @@ const logout = async () => {
     </div>
   </template>
 
-  <div v-else>
+  <div v-else >
     <div class="login-container">
       <h2>Login Page</h2>
 
@@ -161,7 +161,7 @@ label {
 }
 
 .login-container {
-  max-width: 400px;
+  width: 30%;
   margin: auto;
   padding: 20px;
   border: 1px solid #ccc;
