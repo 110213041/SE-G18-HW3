@@ -1,4 +1,7 @@
 import * as DB from "./database.ts";
+import * as ItemsModel from "./m_items.ts";
+import * as ShippingModel from "./m_shipping.ts";
+import * as ShoppingModel from "./m_shopping.ts";
 
 export function getCart(id: number) {
   const query = DB.database.prepareQuery<never, { cart: string }, [number]>(
@@ -94,4 +97,93 @@ export function updateCart(user_id: number, newCart: string) {
     console.error(e);
     return false;
   }
+}
+
+export function checkoutCart(id: number) {
+  const cart = getCart(id);
+
+  if (cart === undefined) return -1;
+
+  type cartItem = {
+    item_id: number;
+    quantity: number;
+  };
+
+  const sellerGroup: Map<
+    number,
+    Array<{
+      seller_id: number;
+      item_id: number;
+      item_name: string;
+      item_price: number;
+      item_description: string | null;
+      quantity: number;
+    }>
+  > = new Map();
+
+  const cartArray: cartItem[] = JSON.parse(cart.cart);
+
+  for (const v of cartArray) {
+    const item = ItemsModel.getItemById(v.item_id);
+    if (item === undefined) {
+      return -1;
+    }
+
+    if (item.state !== 1) {
+      return -1;
+    }
+
+    if (!sellerGroup.has(item.owner_id)) {
+      sellerGroup.set(item.owner_id, []);
+    }
+
+    sellerGroup.get(item.owner_id)?.push(
+      {
+        seller_id: item.owner_id,
+        item_id: v.item_id,
+        item_name: item.display_name,
+        item_price: item.price,
+        item_description: item.description,
+        quantity: v.quantity,
+      },
+    );
+  }
+
+  const shipIdArray: number[] = [];
+
+  const createShippingOrder = DB.database.transaction(() => {
+    sellerGroup.forEach((itemArray) => {
+      itemArray.forEach((v) => {
+        if (ShippingModel.createShipping({ ...v, ship_status: 0 })) {
+          shipIdArray.push(ShippingModel.getLastShipId()!.id);
+        } else {
+          shipIdArray.push(-1);
+        }
+      });
+    });
+
+    if (shipIdArray.filter((v) => v === -1).length > 0) {
+      return -1;
+    }
+  });
+
+  if (!createShippingOrder) return -1;
+
+  const shoppingId = DB.database.transaction(() => {
+    try {
+      const shoppingOrder = ShoppingModel.createShoppingOrder(id);
+      if (shoppingOrder === -1) return -1;
+
+      shipIdArray.forEach((v) => {
+        ShoppingModel.linkShipRelation(shoppingOrder.id, v);
+      });
+
+      return shoppingOrder.id;
+    } catch (e) {
+      console.error(e);
+      return -1;
+    }
+  });
+
+  return shoppingId;
 }

@@ -4,6 +4,8 @@ import { itemHandler } from "./controller/c_item.ts";
 import { accountHandler } from "./controller/c_account.ts";
 import { itemsHandler } from "./controller/c_items.ts";
 import { cartHandler } from "./controller/c_cart.ts";
+import { shoppingHandler } from "./controller/c_shopping.ts";
+import { shippingHandler } from "./controller/c_shipping.ts";
 import * as util from "./util.ts";
 
 export default function apiController(
@@ -23,6 +25,12 @@ export default function apiController(
 
     case "/items":
       return itemsHandler(req);
+
+    case "/shopping":
+      return shoppingHandler(req);
+
+    case "/shipping":
+      return shippingHandler(req);
 
     /** Deprecate API, Do Not Use */
     case "/item":
