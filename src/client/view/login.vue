@@ -142,8 +142,7 @@ const logout = async () => {
   </div>
 </template>
 
-<style>
-/* 共用樣式 */
+<style scoped>
 .form-group {
   margin-bottom: 15px;
 }
@@ -161,7 +160,6 @@ label {
   border-radius: 4px;
 }
 
-/* 登入頁面樣式 */
 .login-container {
   max-width: 400px;
   margin: auto;
@@ -184,10 +182,11 @@ h2 {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: .3s;
 }
 
 .login-button:hover {
-  background-color: #4caf49;
+  background-color: #4caf49 ; 
 }
 
 .register-link {

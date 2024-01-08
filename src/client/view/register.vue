@@ -63,6 +63,7 @@ label {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: .3s;
 }
 
 .register-button:hover {
