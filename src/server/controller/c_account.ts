@@ -81,7 +81,7 @@ async function registerHandler(req: Request) {
 }
 
 type info_request = {
-  id: number;
+  user_id: number;
   session: string;
 };
 
@@ -108,15 +108,17 @@ async function infoHandler(req: Request) {
       await util.getRequestBody(req),
     );
     if (
-      infoRequest.id === undefined ||
+      infoRequest.user_id === undefined ||
       infoRequest.session === undefined
     ) return util.statusResponse(403);
 
-    if (!AccountModel.isSessionValid(infoRequest.session, infoRequest.id)) {
+    if (
+      !AccountModel.isSessionValid(infoRequest.session, infoRequest.user_id)
+    ) {
       return util.statusResponse(403);
     }
 
-    const userInfo = infoProcess(infoRequest.id);
+    const userInfo = infoProcess(infoRequest.user_id);
     if (userInfo === undefined) {
       return util.statusResponse(403);
     }
