@@ -151,6 +151,18 @@ const shipShopERSchema = `--sql
   )
 `;
 
+export type shipping_rate_db = {
+  shipping_id: number;
+  rate: 1 | 2 | 3 | 4 | 5;
+};
+
+const shippingRateSchema = `--sql
+  CREATE TABLE shipping_rate (
+    "shipping_id" INTEGER NOT NULL,
+    "rate" INTEGER CHECK("rate" IN (1,2,3,4,5)) NOT NULL
+  )
+`;
+
 database.execute(pragma);
 database.execute(memberSchema);
 database.execute(sessionSchema);
@@ -160,3 +172,4 @@ database.execute(cartSchema);
 database.execute(shoppingSchema);
 database.execute(shippingSchema);
 database.execute(shipShopERSchema);
+database.execute(shippingRateSchema);

@@ -1,7 +1,6 @@
 import * as util from "../util.ts";
 import * as AccountModel from "../model/m_account.ts";
 import * as ShippingModel from "../model/m_shipping.ts";
-import * as ShoppingModel from "../model/m_shopping.ts";
 
 type get_request = {
   id: number;
@@ -89,6 +88,57 @@ async function alterHandler(req: Request) {
   }
 }
 
+type rate_request = {
+  id: number;
+  session: string;
+  shipping_order: number;
+  rate: number;
+};
+
+async function rateHandler(req: Request) {
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(405);
+
+  let rateRequest: rate_request;
+
+  try {
+    rateRequest = JSON.parse(await util.getRequestBody(req));
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(400);
+  }
+
+  if (AccountModel.isSessionValid(rateRequest.session, rateRequest.id)) {
+    return util.statusResponse(403);
+  }
+
+  const shippingOrder = ShippingModel.getShippingById(
+    rateRequest.shipping_order,
+  );
+  if (shippingOrder === undefined) {
+    return util.statusResponse(404);
+  }
+
+  if (ShippingModel.getShippingRate(rateRequest.shipping_order) !== undefined) {
+    return util.statusResponse(400);
+  }
+
+  if (shippingOrder.ship_status < 3) {
+    return util.statusResponse(403);
+  }
+
+  if (rateRequest.rate < 1 || rateRequest.rate > 5) {
+    return util.statusResponse(400);
+  }
+
+  try {
+    ShippingModel.setShippingRate(rateRequest.shipping_order, rateRequest.rate);
+    return util.statusResponse(201);
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(500);
+  }
+}
+
 export function shippingHandler(req: Request) {
   const url = new URL(req.url);
   const pathName = util.getFirstPath(url.pathname.replace("/api/shipping", ""));
@@ -100,6 +150,9 @@ export function shippingHandler(req: Request) {
 
     case "/alter":
       return alterHandler(req);
+
+    case "/rate":
+      return rateHandler(req);
 
     default:
       return util.statusResponse(400);
