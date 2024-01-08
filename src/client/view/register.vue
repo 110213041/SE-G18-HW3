@@ -12,15 +12,15 @@
     <input v-model="password" type="password" id="password" />
 
     <button @click="register">Register</button>
-    
+
     <router-link to="/login">Go to Login</router-link>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref} from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { username, password, email} from "../model/global_state";
+import { username, password, email } from "../model/global_state";
 // 全域狀態管理使用者輸入的數據
 // const username = ref('');
 // const email = ref('');
@@ -32,7 +32,7 @@ const router = useRouter();
 // 註冊方法
 const register = async () => {
   try {
-    const response = await fetch('http://127.0.0.1:8000/api/account/register', {
+    const response = await fetch(`${window.location.origin}/api/account/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
