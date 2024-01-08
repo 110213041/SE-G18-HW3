@@ -49,8 +49,6 @@ const register = async () => {
       if (response.status === 201) {
         console.log('Registration successful');
 
-        // 在這裡你可以處理註冊成功後的相應邏輯
-
         // 註冊成功後導向到登入頁面
         router.push('/login');
       } else {
