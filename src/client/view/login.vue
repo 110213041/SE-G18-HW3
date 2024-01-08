@@ -97,8 +97,6 @@ const login = async () => {
   
 };
 
-
-
 // 前往註冊頁面的方法
 const goToRegister = () => {
   router.push('/register');
@@ -115,73 +113,106 @@ const logout = async () => {
 }
 </script>
 
-
 <template>
   <template v-if="userInfo !== undefined">
-    <div>hello: {{ userInfo.user_name }}</div>
-    <button @click="logout">logout</button>
+    <div class="welcome-container">
+      <div>Hello: {{ userInfo.user_name }}</div>
+      <button @click="logout" class="logout-button">Logout</button>
+    </div>
   </template>
-  <!-- <template v-if="role">
 
-  </template> -->
   <div v-else>
-    <h2>Login Page</h2>
+    <div class="login-container">
+      <h2>Login Page</h2>
 
-    <label for="username">Username:</label>
-    <input v-model="username" type="text" id="username" />
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input v-model="username" type="text" id="username" class="form-input" />
+      </div>
 
-    <label for="password">Password:</label>
-    <input v-model="password" type="password" id="password" />
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input v-model="password" type="password" id="password" class="form-input" />
+      </div>
 
-    <button @click="login">Login</button>
+      <button @click="login" class="login-button">Login</button>
 
-    <router-link to="/register">Go to Regist</router-link>
+      <router-link to="/register" class="register-link">Go to Register</router-link>
+    </div>
   </div>
 </template>
 
-
-
-<style scoped>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f4f4f4;
-}
-
-.login-container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+<style>
+/* 共用樣式 */
+.form-group {
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
-input {
+.form-input {
   width: 100%;
   padding: 8px;
-  margin-bottom: 16px;
-  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-button {
+/* 登入頁面樣式 */
+.login-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-button {
   background-color: #4caf50;
   color: #fff;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
+.login-button:hover {
+  background-color: #4caf49;
+}
+
+.register-link {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* 歡迎頁面樣式 */
+.welcome-container {
+  text-align: center;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background-color: #bd2130;
 }
 </style>
