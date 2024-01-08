@@ -25,6 +25,8 @@ async function allHandler(req: Request) {
 
   const shopping_order = ShoppingModel.getShoppingByUserId(allRequest.id);
 
+  console.log(shopping_order);
+
   try {
     const result = shopping_order.map((v) => {
       return {
@@ -66,7 +68,7 @@ async function getHandler(req: Request) {
     return util.statusResponse(403);
   }
 
-  const shopping_order = ShoppingModel.getShoppingById(getRequest.id);
+  const shopping_order = ShoppingModel.getShoppingById(getRequest.order_id);
   if (shopping_order === undefined) {
     return util.statusResponse(404);
   }

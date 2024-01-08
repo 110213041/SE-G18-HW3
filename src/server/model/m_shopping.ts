@@ -101,7 +101,7 @@ export function getOrderShipping(order_id: number) {
       shipping_id
     FROM
       ship_ship_er
-    WHERE shopping_id = ? order_id
+    WHERE shopping_id = ?
   `);
 
   const result = query.allEntries([order_id]);

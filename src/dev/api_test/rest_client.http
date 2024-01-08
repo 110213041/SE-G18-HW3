@@ -25,7 +25,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
 }
 
 ### item get
@@ -34,7 +34,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
   "item_id": 1
 }
 
@@ -47,7 +47,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
 }
 
 ### cart set
@@ -56,9 +56,9 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
   "item_id": 2,
-  "quantity": 2
+  "quantity": 69
 }
 
 ### cart del
@@ -67,7 +67,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
   "item_id": 2
 }
 
@@ -77,5 +77,31 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+
+}
+### cart checkout
+POST http://127.0.0.1:8000/api/cart/checkout
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+}
+
+### shopping all
+POST http://127.0.0.1:8000/api/shopping/all
+
+{
+  "id": 5,
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+}
+
+### shopping get
+POST http://127.0.0.1:8000/api/shopping/get
+
+{
+  "id": 5,
+  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
+  "order_id": 2
 }

@@ -61,7 +61,7 @@ export function createShipping(newItem: Omit<DB.shipping_db, "id">) {
       "seller_id",
       "item_id",
       "item_name",
-      "item_prince",
+      "item_price",
       "item_description",
       "quantity",
       "ship_status"
