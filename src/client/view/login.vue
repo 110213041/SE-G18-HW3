@@ -95,12 +95,23 @@ const login = async () => {
 const goToRegister = () => {
   router.push('/register');
 };
+
+
+const logout = async () => {
+  username.value = ""
+  password.value = ""
+  email.value = ""
+  userId.value = 0
+  session.value = ""
+  userInfo.value = undefined
+}
 </script>
 
 
 <template>
   <template v-if="userInfo !== undefined">
     <div>hello: {{ userInfo.user_name }}</div>
+    <button @click="logout">logout</button>
   </template>
 
   <div v-else>
