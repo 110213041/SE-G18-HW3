@@ -106,8 +106,9 @@ export function isSessionValid(session: string, id?: number): boolean {
   if (id === undefined) {
     return true;
   } else {
-    return (result.user_id === id &&
-      (Date.now() + 60 * 1000 < result.life_time));
+    // return (result.user_id === id &&
+    //   (Date.now() + 60 * 1000 < result.life_time));
+    return result.user_id === id;
   }
 }
 

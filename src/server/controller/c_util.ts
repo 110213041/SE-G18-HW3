@@ -6,6 +6,7 @@ export type info_request = {
 export function getSession(body: string) {
   try {
     const obj: { session?: string } = JSON.parse(body);
+    console.log(obj);
     if (obj.session !== undefined && typeof obj.session === "string") {
       return obj.session;
     } else {

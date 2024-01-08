@@ -24,6 +24,58 @@ POST http://127.0.0.1:8000/api/account/info
 content-type: application/json
 
 {
-  "id": 4,
-  "session": "5c1d5f08-5b51-4d38-9109-401806893024"
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
+}
+
+### item get
+POST http://127.0.0.1:8000/api/items/get
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "item_id": 1
+}
+
+### item all
+GET http://127.0.0.1:8000/api/items/all
+
+### cart get
+POST http://127.0.0.1:8000/api/cart/get
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
+}
+
+### cart set
+POST http://127.0.0.1:8000/api/cart/set
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "item_id": 2,
+  "quantity": 2
+}
+
+### cart del
+POST http://127.0.0.1:8000/api/cart/del
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125",
+  "item_id": 2
+}
+
+### cart clean
+POST http://127.0.0.1:8000/api/cart/clean
+content-type: application/json
+
+{
+  "user_id": 5,
+  "session": "cb24f5d5-98d2-4bfc-adf5-0bab2040b125"
 }
