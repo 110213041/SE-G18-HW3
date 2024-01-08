@@ -139,6 +139,38 @@ async function rateHandler(req: Request) {
   }
 }
 
+type rate_get_request = {
+  id: number;
+  session: string;
+  shipping_order: number;
+};
+
+async function rateGetHandler(req: Request) {
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(405);
+
+  try {
+    const rateGetRequest: rate_get_request = JSON.parse(
+      await util.getRequestBody(req),
+    );
+    if (
+      AccountModel.isSessionValid(rateGetRequest.session, rateGetRequest.id)
+    ) {
+      return util.statusResponse(403);
+    }
+
+    const result = ShippingModel.getShippingRate(rateGetRequest.shipping_order);
+    if (result === undefined) return util.statusResponse(404);
+
+    return util.responseTemplate({
+      type: "shipping_rate",
+      content: result,
+    }, 200);
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(500);
+  }
+}
+
 export function shippingHandler(req: Request) {
   const url = new URL(req.url);
   const pathName = util.getFirstPath(url.pathname.replace("/api/shipping", ""));
@@ -153,6 +185,9 @@ export function shippingHandler(req: Request) {
 
     case "/rate":
       return rateHandler(req);
+
+    case "/rate_get":
+      return rateGetHandler(req);
 
     default:
       return util.statusResponse(400);

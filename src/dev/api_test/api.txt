@@ -388,6 +388,33 @@
       405
   
 
+  /rate_get
+    取得評分
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          shipping_order: number;
+          state: number;
+        }
+    
+    Response:
+      Success:
+       {
+        type: "shipping_rate",
+        content: {
+          shipping_id: number
+          rate: number
+        }
+       }
+
+      Fail:
+        403
+        404
+        405
 
 /** Deprecate API, Do Not Use */
 /item (沒有 s)
