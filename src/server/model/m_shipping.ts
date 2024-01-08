@@ -88,7 +88,7 @@ export function createShipping(newItem: Omit<DB.shipping_db, "id">) {
 }
 
 export function alterShipping(
-  id: string,
+  id: number,
   attribute: string,
   value: string | number,
 ) {

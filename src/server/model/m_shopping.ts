@@ -19,9 +19,26 @@ export function getShoppingById(id: number) {
       "user_id"
     FROM
       shopping
+    WHERE id = ?
   `);
 
   const result = query.firstEntry([id]);
+  query.finalize();
+
+  return result;
+}
+
+export function getShoppingByUserId(id: number) {
+  const query = DB.database.prepareQuery<never, DB.shopping_db>(`--sql
+    SELECT
+      "id",
+      "user_id"
+    FROM
+      shopping
+    WHERE user_id = ?
+  `);
+
+  const result = query.allEntries([id]);
   query.finalize();
 
   return result;
@@ -75,4 +92,20 @@ export function linkShipRelation(shop_id: number, ship_id: number) {
     console.error(e);
     return false;
   }
+}
+
+export function getOrderShipping(order_id: number) {
+  const query = DB.database.prepareQuery<never, DB.ship_ship_er_db>(`--sql
+    SELECT 
+      shopping_id,
+      shipping_id
+    FROM
+      ship_ship_er
+    WHERE shopping_id = ? order_id
+  `);
+
+  const result = query.allEntries([order_id]);
+  query.finalize();
+
+  return result;
 }
