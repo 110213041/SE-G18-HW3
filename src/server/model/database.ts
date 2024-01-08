@@ -147,7 +147,7 @@ export type ship_ship_er_db = {
 const shipShopERSchema = `--sql
   CREATE TABLE ship_ship_er (
     "shopping_id" INTEGER NOT NULL,
-    "shipping_id" INTEGER NOT NULL,
+    "shipping_id" INTEGER NOT NULL
   )
 `;
 
