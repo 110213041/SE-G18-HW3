@@ -73,7 +73,7 @@ export function delCart(user_id: number, item_id: number) {
 
     return updateCart(
       user_id,
-      JSON.stringify(cartObj.filter((v) => v.item_id! == item_id)),
+      JSON.stringify(cartObj.filter((v) => v.item_id !== item_id)),
     );
   } catch (e) {
     console.error(e);

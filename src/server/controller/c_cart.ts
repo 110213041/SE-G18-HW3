@@ -13,6 +13,9 @@ async function getHandler(req: Request) {
 
   try {
     const getRequest: get_request = JSON.parse(await util.getRequestBody(req));
+    if (!AccountModel.isSessionValid(getRequest.session, getRequest.user_id)) {
+      return util.statusResponse(403);
+    }
 
     let cart = CartModel.getCart(getRequest.user_id);
 
@@ -47,8 +50,15 @@ async function setHandler(req: Request) {
 
   try {
     const setRequest: set_request = JSON.parse(await util.getRequestBody(req));
+
+    if (!AccountModel.isSessionValid(setRequest.session, setRequest.user_id)) {
+      return util.statusResponse(403);
+    }
+
+    if (setRequest.quantity < 1) return util.statusResponse(400);
+
     if (
-      CartModel.alterCart(
+      !CartModel.alterCart(
         setRequest.user_id,
         setRequest.item_id,
         setRequest.quantity,
@@ -64,7 +74,7 @@ async function setHandler(req: Request) {
 
     return util.responseTemplate({
       type: "cart",
-      content: cart,
+      content: JSON.parse(cart.cart),
     }, 200);
   } catch (e) {
     console.error(e);
@@ -84,6 +94,10 @@ export async function delHandler(req: Request) {
   try {
     const delRequest: del_request = JSON.parse(await util.getRequestBody(req));
 
+    if (!AccountModel.isSessionValid(delRequest.session, delRequest.user_id)) {
+      return util.statusResponse(403);
+    }
+
     if (!CartModel.delCart(delRequest.user_id, delRequest.item_id)) {
       return util.statusResponse(500);
     }
@@ -95,7 +109,7 @@ export async function delHandler(req: Request) {
 
     return util.responseTemplate({
       type: "cart",
-      content: cart,
+      content: JSON.parse(cart.cart),
     }, 200);
   } catch (e) {
     console.error(e);
@@ -116,6 +130,12 @@ async function cleanHandler(req: Request) {
       await util.getRequestBody(req),
     );
 
+    if (
+      !AccountModel.isSessionValid(cleanRequest.session, cleanRequest.user_id)
+    ) {
+      return util.statusResponse(403);
+    }
+
     if (!CartModel.updateCart(cleanRequest.user_id, JSON.stringify([]))) {
       return util.statusResponse(500);
     }
@@ -127,7 +147,7 @@ async function cleanHandler(req: Request) {
 
     return util.responseTemplate({
       type: "cart",
-      content: cart,
+      content: JSON.parse(cart.cart),
     }, 200);
   } catch (e) {
     console.error(e);
@@ -172,15 +192,20 @@ export async function cartHandler(req: Request) {
   const pathName = util.getFirstPath(url.pathname.replace("/api/cart", ""));
   console.log(`INFO: /cart path: ${pathName}`);
 
-  try {
-    const session = ControlUtil.getSession(await util.getRequestBody(req));
-    if (session === undefined || !AccountModel.isSessionValid(session)) {
-      return util.statusResponse(403);
-    }
-  } catch (e) {
-    console.error(e);
-    return util.statusResponse(400);
-  }
+  // try {
+  //   // const session = ControlUtil.getSession(await util.getRequestBody(req));
+  //   const reqObj = JSON.parse(await util.getRequestBody(req));
+  //   console.log(reqObj);
+  //   if (
+  //     reqObj === undefined ||
+  //     !AccountModel.isSessionValid(reqObj.session)
+  //   ) {
+  //     return util.statusResponse(403);
+  //   }
+  // } catch (e) {
+  //   console.error(e);
+  //   return util.statusResponse(400);
+  // }
 
   switch (pathName) {
     case "/get":
