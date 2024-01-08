@@ -128,7 +128,7 @@ export function getUserById(id: number) {
 
 export function getUserRoleById(id: number) {
   const query = DB.database.prepareQuery<never, { role: number }, [number]>(
-    `SELECT user_name, email FROM member WHERE id = ?`,
+    `SELECT "role" FROM member_role WHERE user_id = ?`,
   );
 
   const result = query.allEntries([id]);
