@@ -50,7 +50,7 @@ async function getHandler(req: Request) {
     return util.statusResponse(400);
   }
 
-  if (AccountModel.isSessionValid(getRequest.session, getRequest.id)) {
+  if (!AccountModel.isSessionValid(getRequest.session, getRequest.id)) {
     return util.statusResponse(403);
   }
 
@@ -138,7 +138,7 @@ async function rateHandler(req: Request) {
     return util.statusResponse(400);
   }
 
-  if (AccountModel.isSessionValid(rateRequest.session, rateRequest.id)) {
+  if (!AccountModel.isSessionValid(rateRequest.session, rateRequest.id)) {
     return util.statusResponse(403);
   }
 
@@ -184,7 +184,7 @@ async function rateGetHandler(req: Request) {
       await util.getRequestBody(req),
     );
     if (
-      AccountModel.isSessionValid(rateGetRequest.session, rateGetRequest.id)
+      !AccountModel.isSessionValid(rateGetRequest.session, rateGetRequest.id)
     ) {
       return util.statusResponse(403);
     }
