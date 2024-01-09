@@ -32,7 +32,7 @@ async function allHandler(req: Request) {
       return {
         id: v.id,
         shipping: ShoppingModel.getOrderShipping(v.id).map((v) =>
-          ShippingModel.getShippingById(v.shopping_id)!
+          ShippingModel.getShippingById(v.shipping_id)!
         ),
       };
     });
@@ -77,7 +77,7 @@ async function getHandler(req: Request) {
     const result = {
       id: shopping_order.id,
       shipping: ShoppingModel.getOrderShipping(shopping_order.id).map((v) =>
-        ShippingModel.getShippingById(v.shopping_id)!
+        ShippingModel.getShippingById(v.shipping_id)!
       ),
     };
 
