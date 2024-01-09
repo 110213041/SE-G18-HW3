@@ -2,95 +2,19 @@
 import { ref, onMounted } from 'vue';
 import { username, password, email, userId, session, userInfo} from "../model/global_state";
 import { handleLogout} from "../model/global_state";
-
-const cartItems = ref([]);
-
-const fetchCartData = async () => {
-  // console.log(`${userId.value}, ${session.value}`)
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/get`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('getCart successful:', data.content);
-      if (data.type === 'cart') {
-        cartItems.value = data.content;
-      } else {
-        console.error('Unexpected response type:', data.type);
-      }
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-const resetCart = async () => {
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/clean`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('Cart reset successful');
-      fetchCartData();
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-// 新增函数，用于提交购物车内容
-const submitCart = async () => {
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/submit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-        cart: cartItems.value,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('Cart submitted successfully');
-    
-      resetCart();
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-onMounted(() => {
-  fetchCartData();
-});
-
-
+import{
+  fetchCartData,
+  resetCart,
+  changeItem,
+  delItem,
+  checkout,
+  cartItems,
+  orderId,
+} from "../controller/cart_new";
+import { 
+  getRate,
+  giveRate,
+} from "../controller/order";
 </script>
 
 <template>
@@ -100,14 +24,47 @@ onMounted(() => {
       <button @click="handleLogout" class="logout-button">Logout</button>
     </div>
   </template>
-  <div>
+  <!-- <div>
     <h2>Your Cart</h2>
     <ul>
       <li v-for="item in cartItems" :key="item.itemId">
         Item ID: {{ item.item_id }} - Quantity: {{ item.quantity }}
       </li>
     </ul>
-    <button @click="resetCart">Reset Cart</button>
-    <button @click="submitCart">Submit Cart</button>
+    <button @click="resetCart()">清空</button>
+    <button @click="checkout()">結帳</button>
+  </div> -->
+  <div>
+    <h2>Shopping Cart</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Item ID</th>
+          <th>Item Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in cartItems" :key="item.item_id">
+          <!-- <td>{{ item.item_id }}</td>
+          <td>{{ item.display_name }}</td>
+          <td>${{ item.price }}</td>
+          <td>{{ item.quantity }}</td> -->
+          <td>
+            <button @click="changeItem(item.item_id, item.quantity - 1)">Decrease</button>
+            <button @click="changeItem(item.item_id, item.quantity + 1)">Increase</button>
+            <button @click="delItem(item.item_id)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div>
+      <button @click="checkout()">Checkout</button>
+      <button @click="resetCart()">Clear Cart</button>
+    </div>
   </div>
 </template>
