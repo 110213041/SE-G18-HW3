@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
-import { userId, session } from "../model/global_state";
+import { username, password, email, userId, session, userInfo} from "../model/global_state";
+import { handleLogout} from "../model/global_state";
 
 const cartItems = ref([]);
 
@@ -53,7 +54,7 @@ const resetCart = async () => {
 };
 
 // 新增函数，用于提交购物车内容
-export const submitCart = async () => {
+const submitCart = async () => {
   try {
     const response = await fetch(`${window.location.origin}/api/cart/submit`, {
       method: 'POST',
@@ -87,6 +88,12 @@ onMounted(() => {
 </script>
 
 <template>
+  <template v-if="userId !== undefined">
+    <div class="welcome-container">
+      <div>Hello: {{ username }}</div>
+      <button @click="handleLogout" class="logout-button">Logout</button>
+    </div>
+  </template>
   <div>
     <h2>Your Cart</h2>
     <ul>

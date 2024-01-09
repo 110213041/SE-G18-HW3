@@ -1,5 +1,7 @@
-import { type Ref, ref } from "vue";
-
+import { type Ref, ref, nextTick } from "vue";
+import { useRouter } from 'vue-router';
+import {router} from "../controller/router";
+// const router = useRouter();
 export type cartItem = {
   itemId: number;
   quantity: number;
@@ -35,7 +37,7 @@ export const userInfo: Ref<
 // 將這個函數放在某個適當的文件中，例如 homeRouter.js
 
 //找不同角色的家
-import { useRouter } from 'vue-router';
+
 export type role = {
   seller: boolean;
   shipper: boolean;
@@ -46,6 +48,33 @@ export function findHome(role:role) {
   } else if (role.shipper) {
     return '/shipperHome';
   } else {
-    return '/clientHome'; 
+    return '/clientHome';
   }
 }
+
+
+// 登出
+const logout = async () => {
+  username.value = ""
+  password.value = ""
+  email.value = ""
+  userId.value = 0
+  session.value = ""
+  userInfo.value = undefined
+}
+export const handleLogout = async () => {
+  await logout();
+
+  // 在成功登出後輸出 "Goodbye"
+  console.log("Goodbye");
+  await nextTick();
+
+  // 檢查 router 是否已定義，然後進行導航
+  if (router) {
+    router.push('/login');
+  } else {
+    console.error('router is undefined');
+  }
+};
+
+

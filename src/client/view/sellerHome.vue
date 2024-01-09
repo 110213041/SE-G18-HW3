@@ -1,6 +1,8 @@
 
 <script lang="ts">
 import { ref, onMounted } from 'vue';
+import { handleLogout} from "../model/global_state";
+import { username, password, email, userId, session, userInfo} from "../model/global_state";
 
 export default {
   setup() {
@@ -44,6 +46,12 @@ export default {
 };
 </script>
 <template>
+  <template v-if="userId !== undefined">
+    <div class="welcome-container">
+      <div>Hello: {{ username }}</div>
+      <button @click="handleLogout" class="logout-button">Logout</button>
+    </div>
+  </template>
   <div>
     <h2>商家訂單</h2>
     <div v-if="orders.length === 0">
