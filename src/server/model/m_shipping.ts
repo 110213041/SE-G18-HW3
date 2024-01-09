@@ -11,6 +11,27 @@ export function getLastShipId() {
   return result;
 }
 
+export function getShippingAll() {
+  const query = DB.database.prepareQuery<never, DB.shipping_db>(`--sql
+    SELECT 
+      "id",
+      "seller_id",
+      "item_id",
+      "item_name",
+      "item_price",
+      "item_description",
+      "quantity",
+      "ship_status"
+    FROM
+      shipping
+  `);
+
+  const result = query.allEntries();
+  query.finalize();
+
+  return result;
+}
+
 export function getShippingById(id: number) {
   const query = DB.database.prepareQuery<never, DB.shipping_db>(`--sql
     SELECT 

@@ -309,6 +309,29 @@
 
 /shipping
   運輸單
+  /all
+  取所有運輸單
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+        }
+    
+    Response:
+      Success: 
+        {
+          type: "shipment_all",
+          content: Array<(/shipping/get.value 輸出)>
+        }
+  
+      Fail:
+        400 General Error.
+        403 Auth Fail.
+        405  Wrong method or not providing id and session.
+
   /get
     去一個運輸單
     Request:

@@ -2,6 +2,37 @@ import * as util from "../util.ts";
 import * as AccountModel from "../model/m_account.ts";
 import * as ShippingModel from "../model/m_shipping.ts";
 
+type all_request = {
+  id: number;
+  session: string;
+};
+
+async function allHandler(req: Request) {
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(405);
+
+  let allRequest: all_request;
+  try {
+    allRequest = JSON.parse(await util.getRequestBody(req));
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(400);
+  }
+
+  if (AccountModel.isSessionValid(allRequest.session, allRequest.id)) {
+    return util.statusResponse(403);
+  }
+
+  try {
+    return util.responseTemplate({
+      type: "shipment_all",
+      content: ShippingModel.getShippingAll(),
+    }, 200);
+  } catch (e) {
+    console.error(e);
+    return util.statusResponse(500);
+  }
+}
+
 type get_request = {
   id: number;
   session: string;
@@ -177,6 +208,9 @@ export function shippingHandler(req: Request) {
   console.log(`INFO: /shipping path: ${pathName}`);
 
   switch (pathName) {
+    case "/all":
+      return allHandler(req);
+
     case "/get":
       return getHandler(req);
 
