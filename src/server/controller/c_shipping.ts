@@ -83,7 +83,7 @@ async function alterHandler(req: Request) {
     return util.statusResponse(400);
   }
 
-  if (AccountModel.isSessionValid(alterRequest.session, alterRequest.id)) {
+  if (!AccountModel.isSessionValid(alterRequest.session, alterRequest.id)) {
     return util.statusResponse(403);
   }
 
