@@ -6,16 +6,22 @@ import { handleLogout} from "../model/global_state";
 const cartItems = ref([]);
 
 const fetchCartData = async () => {
+  // console.log(`${userId.value}, ${session.value}`)
   try {
     const response = await fetch(`${window.location.origin}/api/cart/get`, {
-      method: 'GET',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        user_id: userId.value,
+        session: session.value,
+      }),
     });
 
     if (response.ok) {
       const data = await response.json();
+      console.log('getCart successful:', data.content);
       if (data.type === 'cart') {
         cartItems.value = data.content;
       } else {
