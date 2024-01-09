@@ -46,6 +46,6 @@ export function findHome(role:role) {
   } else if (role.shipper) {
     return '/shipperHome';
   } else {
-    return '/clientHome';
+    return '/clientHome'; 
   }
 }

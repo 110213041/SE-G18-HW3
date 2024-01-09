@@ -53,7 +53,7 @@ const resetCart = async () => {
 };
 
 // 新增函数，用于提交购物车内容
-const submitCart = async () => {
+export const submitCart = async () => {
   try {
     const response = await fetch(`${window.location.origin}/api/cart/submit`, {
       method: 'POST',
@@ -63,13 +63,13 @@ const submitCart = async () => {
       body: JSON.stringify({
         user_id: userId.value,
         session: session.value,
-        cart: cartItems.value, // 将购物车内容作为参数传递
+        cart: cartItems.value,
       }),
     });
 
     if (response.ok) {
       console.log('Cart submitted successfully');
-      // 提交成功后清空购物车
+    
       resetCart();
     } else {
       console.error('Request failed with status:', response.status);
@@ -79,16 +79,10 @@ const submitCart = async () => {
   }
 };
 
-// 在组件挂载后获取购物车数据
 onMounted(() => {
   fetchCartData();
 });
 
-return {
-  cartItems,
-  resetCart,
-  submitCart, // 将新添加的函数暴露给模板
-};
 
 </script>
 
@@ -96,12 +90,11 @@ return {
   <div>
     <h2>Your Cart</h2>
     <ul>
-      <li v-for="item in cartItems" :key="item.item_id">
+      <li v-for="item in cartItems" :key="item.itemId">
         Item ID: {{ item.item_id }} - Quantity: {{ item.quantity }}
       </li>
     </ul>
     <button @click="resetCart">Reset Cart</button>
-    <!-- 新添加的提交购物车按钮 -->
     <button @click="submitCart">Submit Cart</button>
   </div>
 </template>
