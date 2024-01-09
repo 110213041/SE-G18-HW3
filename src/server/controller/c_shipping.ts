@@ -18,7 +18,7 @@ async function allHandler(req: Request) {
     return util.statusResponse(400);
   }
 
-  if (AccountModel.isSessionValid(allRequest.session, allRequest.id)) {
+  if (!AccountModel.isSessionValid(allRequest.session, allRequest.id)) {
     return util.statusResponse(403);
   }
 
