@@ -25,7 +25,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 }
 
 ### item get
@@ -34,7 +34,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df",
   "item_id": 1
 }
 
@@ -47,7 +47,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 }
 
 ### cart set
@@ -56,7 +56,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df",
   "item_id": 2,
   "quantity": 69
 }
@@ -67,7 +67,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df",
   "item_id": 2
 }
 
@@ -77,7 +77,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 
 }
 ### cart checkout
@@ -86,7 +86,7 @@ content-type: application/json
 
 {
   "user_id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 }
 
 ### shopping all
@@ -94,7 +94,7 @@ POST http://127.0.0.1:8000/api/shopping/all
 
 {
   "id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5"
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 }
 
 ### shopping get
@@ -102,6 +102,14 @@ POST http://127.0.0.1:8000/api/shopping/get
 
 {
   "id": 5,
-  "session": "5ddf37fe-62fa-4c00-b983-46a2ca0d17d5",
-  "order_id": 2
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df",
+  "order_id": 1
+}
+
+### shipping all
+POST http://127.0.0.1:8000/api/shipping/all
+
+{
+  "id": 5,
+  "session": "28ee014d-12cd-41ff-9121-7a722162a1df"
 }
