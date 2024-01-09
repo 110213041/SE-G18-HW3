@@ -9,7 +9,7 @@ type get_request = {
 };
 
 async function getHandler(req: Request) {
-  if (!util.isMethodJson(req, "GET")) return util.statusResponse(405);
+  if (!util.isMethodJson(req, "POST")) return util.statusResponse(405);
 
   try {
     const getRequest: get_request = JSON.parse(await util.getRequestBody(req));

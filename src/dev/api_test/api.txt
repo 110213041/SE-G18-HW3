@@ -89,7 +89,7 @@
     Getting custom cart.
 
     Request:
-      Method: GET
+      Method: POST
       Header: content-type: application/json
       Body:
         {
