@@ -42,7 +42,7 @@ type register_request = {
   name: string;
   email: string;
   password: string;
-  as_shipper?: boolean;
+  as_shopper?: boolean;
 };
 
 function registerProcess(payload: register_request) {
@@ -85,8 +85,8 @@ async function registerHandler(req: Request) {
       }
 
       if (
-        registerRequest.as_shipper !== undefined &&
-        registerRequest.as_shipper === true
+        registerRequest.as_shopper !== undefined &&
+        registerRequest.as_shopper === true
       ) {
         if (
           !AccountModel.createNewAccountRole(

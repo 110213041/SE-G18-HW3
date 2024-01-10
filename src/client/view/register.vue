@@ -17,6 +17,12 @@
       <input v-model="password" type="password" id="password" class="form-input" />
     </div>
 
+    <div class="form-group">
+      <label for="shopper">want to be shopper:</label>
+      <input v-model="isShopper" type="checkbox" id="shopper" class="form-input" />
+    </div>
+
+
     <button @click="register" class="register-button">Register</button>
 
     <router-link to="/login" class="login-link">Go to Login</router-link>
@@ -81,8 +87,12 @@ label {
 
 
 <script lang="ts" setup>
+import { ref } from "vue"
+
 import { useRouter } from 'vue-router';
 import { username, password, email } from "../model/global_state";
+
+const isShopper = ref(false)
 
 // 使用Vue Router的實例
 const router = useRouter();
@@ -99,6 +109,7 @@ const register = async () => {
         name: username.value,
         email: email.value,
         password: password.value,
+        as_shopper: isShopper.value
       }),
     });
 
@@ -106,6 +117,7 @@ const register = async () => {
       // 處理成功註冊的情況
       if (response.status === 201) {
         console.log('Registration successful');
+        isShopper.value = false
 
         // 註冊成功後導向到登入頁面
         router.push('/login');
