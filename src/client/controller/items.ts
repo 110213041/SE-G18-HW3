@@ -13,6 +13,15 @@ export type requestInfo = {
   quantity: number;
 };
 
+export type item_t = {
+  id: number;
+  display_name: string;
+  price: number;
+  description: string;
+  owner_id: number;
+  state: number;
+};
+
 // Get one item info
 export const getItemInfo = async (itemId: requestInfo) => {
   try {
@@ -34,7 +43,7 @@ export const getItemInfo = async (itemId: requestInfo) => {
 
     const data = await response.json();
     if (data.type === "items") {
-      const itemInfo = data.content;
+      const itemInfo: item_t = data.content;
       console.log("Item Info:", itemInfo);
       return itemInfo;
     } else {
@@ -60,7 +69,7 @@ export const getAllItems = async () => {
 
     const data = await response.json();
     if (data.type === "items_all") {
-      const allItems = data.content;
+      const allItems: item_t[] = data.content;
       console.log("All Items:", allItems);
       return allItems;
     } else {
@@ -140,7 +149,7 @@ export const createItem = async (
 
     const data = await response.json();
     if (data.type === "item_create") {
-      const createdItem = data.content;
+      const createdItem: item_t = data.content;
       console.log("Item created successfully:", createdItem);
       return createdItem;
     } else {

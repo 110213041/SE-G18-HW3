@@ -1,27 +1,56 @@
-import { username, password, email, userId, session, userInfo} from "../model/global_state";
-import { handleLogout} from "../model/global_state";
-import { useRouter } from 'vue-router';
-import { orderId } from "./cart_new";
+import {
+  email,
+  password,
+  session,
+  userId,
+  userInfo,
+  username,
+} from "../model/global_state";
+import { handleLogout } from "../model/global_state";
+import { useRouter } from "vue-router";
+// import { orderId } from "./cart_new";
 // import { State} from "../view/shipperHome.vue";
 // import { rate } from "../view/clientHome.vue";
+
+export type shipping_t = {
+  id: number;
+  seller_id: number;
+  item_id: number;
+  item_name: string;
+  item_price: number;
+  item_description: string | null;
+  quantity: number;
+  ship_status: 0 | 1 | 2 | 3;
+};
+
+export type shopping_t = {
+  id: number;
+  user_id: number;
+};
+
+export type shopping_order_t = Pick<shopping_t, "id"> & {
+  shipping: shipping_t;
+};
+
 //取得所有結帳記錄
 export const getAllShoppingOrder = async () => {
   try {
     const response = await fetch(`${window.location.origin}/api/shopping/all`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id: userId.value,
-        session:session.value,
+        session: session.value,
       }),
     });
     if (response.ok) {
       const data = await response.json();
       if (data.type === "shopping_record_all") {
-        const recordList = data.content;
+        const recordList: shopping_order_t[] = data.content;
         console.log("record List:", recordList);
+        return recordList;
       } else {
         console.error("Unexpected response type:", data.type);
       }
@@ -31,27 +60,28 @@ export const getAllShoppingOrder = async () => {
   } catch (error) {
     console.error("Error during fetch:", error);
   }
-}
+};
 // 取讀某一次結帳記錄
-export const getShoppingOrder = async () => {
+export const getShoppingOrder = async (orderId: number) => {
   try {
     const response = await fetch(`${window.location.origin}/api/shopping/get`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id: userId.value,
-        session:session.value,
-        order_id:orderId.value,
+        session: session.value,
+        order_id: orderId,
       }),
     });
 
     if (response.ok) {
       const data = await response.json();
       if (data.type === "shopping_record_all") {
-        const recordList = data.content;
+        const recordList: shopping_order_t = data.content;
         console.log("record List:", recordList);
+        return recordList;
       } else {
         console.error("Unexpected response type:", data.type);
       }
@@ -61,162 +91,175 @@ export const getShoppingOrder = async () => {
   } catch (error) {
     console.error("Error during fetch:", error);
   }
-}
+};
 
 // 取得所有商品運輸記錄
 export const getAllShippingOrder = async () => {
-  console.log(`${userId.value}, ${session.value}`)
+  console.log(`${userId.value}, ${session.value}`);
   try {
-  const response = await fetch(`${window.location.origin}/api/shipping/all`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: userId.value,
-      session: session.value,
-    }),
-  });
+    const response = await fetch(`${window.location.origin}/api/shipping/all`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userId.value,
+        session: session.value,
+      }),
+    });
 
-  if (response.ok) {
-    const data = await response.json();
+    if (response.ok) {
+      const data = await response.json();
 
-    // 處理成功獲取的運輸單數據
-    if (data.type === "shipment_all") {
-      const shipmentList = data.content;
-      console.log("Shipment List:", shipmentList);
+      // 處理成功獲取的運輸單數據
+      if (data.type === "shipment_all") {
+        const shipmentList: shipping_t[] = data.content;
+        console.log("Shipment List:", shipmentList);
+        return shipmentList;
+      } else {
+        console.error("Unexpected response type:", data.type);
+      }
     } else {
-      console.error("Unexpected response type:", data.type);
+      console.error("Failed to fetch shipment list:", response.statusText);
     }
-  } else {
-    console.error("Failed to fetch shipment list:", response.statusText);
+  } catch (error) {
+    console.error("Error during fetch:", error);
   }
-} catch (error) {
-  console.error("Error during fetch:", error);
-}
 };
 
 // 取得指定運輸記錄
-export const getShippingOrder = async () => {
+export const getShippingOrder = async (shippingOrder: number) => {
   try {
     const response = await fetch(`${window.location.origin}/api/shipping/get`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         id: userId.value,
-        shipping_order:orderId.value,
+        shipping_order: shippingOrder,
       }),
     });
-  
+
     if (response.ok) {
       const data = await response.json();
-  
-      if (data.type === 'shipment') {
-        console.log('Shipment:', data.content);
+
+      if (data.type === "shipment") {
+        console.log("Shipment:", data.content);
+        return data.content as shipping_t;
       } else {
-        console.error('Unexpected response type:', data.type);
+        console.error("Unexpected response type:", data.type);
       }
     } else if (response.status === 400) {
-      console.error('General Error:', await response.text());
+      console.error("General Error:", await response.text());
     } else if (response.status === 403) {
-      console.error('Authentication Failed');
+      console.error("Authentication Failed");
     } else {
       console.error("Failed to fetch shipment:", response.statusText);
     }
   } catch (error) {
     console.error("Error during shipment fetch:", error);
   }
-}
+};
 
 // // 改狀態
-// export const altterState = async () => {
-//   try {
-//     const response = await fetch(`${window.location.origin}/api/shipping/alter`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({
-//         id: userId.value,
-//         session:session.value,
-//         shipping_order:orderId.value,
-//         state:State.value,
-//       }),
-//     });
-    
-//     if (response.ok) {
-//       // const data = await response.json();
-//       console.log('alter successful');
-//     } else {
-//       console.error("Failed to alter:", response.statusText);
-//     }
-//   } catch (error) {
-//     console.error("Error during alter:", error);
-  
-//   }
-// }
+export const alterState = async (shippingOrder: number, state: 1 | 2 | 3) => {
+  try {
+    const response = await fetch(
+      `${window.location.origin}/api/shipping/alter`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId.value,
+          session: session.value,
+          shipping_order: shippingOrder,
+          state: state,
+        }),
+      },
+    );
 
-// // 評分
-// export const giveRate = async () => {
-//   try {
-//     const response = await fetch(`${window.location.origin}/api/shipping/get`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({
-//         id: userId.value,
-//         session: session.value,
-//         shipping_order: orderId.value,
-//         rate: rate.value,
-//       }),
-//     });
+    if (response.ok) {
+      console.log("alter successful");
+      return true;
+    } else {
+      console.error("Failed to alter:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error during alter:", error);
+  }
 
-//     if (response.ok) {
-//       // const data = await response.json();
-//       console.log('rate successful');
-//     } else {
-//       console.error("Failed to rate:", response.statusText);
-//     }
-//   } catch (error) {
-//     console.error("Error during rate:", error);
-//   }
-  
-// }
+  return false;
+};
 
-// //看評分
-// export const getRate = async () => {
-//   try {
-//     const response = await fetch(`${window.location.origin}/api/shipping/get`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json"
-//       },
-//       body: JSON.stringify({
-//         id: userId.value,
-//         session: session.value,
-//         shipping_order: orderId.value,
-//         rate: rate.value,
-//       }),
-//     });
+export type shipping_rate_t = {
+  shipping_id: number;
+  rate: 1 | 2 | 3 | 4 | 5;
+};
 
-//     if (response.ok) {
-//       const data = await response.json();
-  
-//       if (data.type === 'shipping_rate') {
-//         console.log('shipping_rate:', data.content);
-//       } else {
-//         console.error('Unexpected response type:', data.type);
-//       }
-//     } else {
-//       console.error("Failed to get rate:", response.statusText);
-//     }
-//   } catch (error) {
-//     console.error("Error during get rate:", error);
-//   }
-// }
+// 評分
+export const giveRate = async (
+  shippingOrder: number,
+  rate: 1 | 2 | 3 | 4 | 5,
+) => {
+  try {
+    const response = await fetch(`${window.location.origin}/api/shipping/get`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userId.value,
+        session: session.value,
+        shipping_order: shippingOrder,
+        rate: rate,
+      }),
+    });
 
+    if (response.ok) {
+      console.log("rate successful");
+      return true;
+    } else {
+      console.error("Failed to rate:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error during rate:", error);
+  }
 
+  return false;
+};
 
+//看評分
+export const getRate = async (shippingOrder: number, rate: number) => {
+  try {
+    const response = await fetch(`${window.location.origin}/api/shipping/get`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: userId.value,
+        session: session.value,
+        shipping_order: shippingOrder,
+        rate: rate,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      if (data.type === "shipping_rate") {
+        console.log("shipping_rate:", data.content);
+        return data.content as shipping_rate_t;
+      } else {
+        console.error("Unexpected response type:", data.type);
+      }
+    } else {
+      console.error("Failed to get rate:", response.statusText);
+    }
+  } catch (error) {
+    console.error("Error during get rate:", error);
+  }
+};
