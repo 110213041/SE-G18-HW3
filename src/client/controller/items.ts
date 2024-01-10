@@ -14,7 +14,7 @@ export type requestInfo = {
 };
 
 export type item_t = {
-  id: number;
+  item_id: number;
   display_name: string;
   price: number;
   description: string;
@@ -23,7 +23,7 @@ export type item_t = {
 };
 
 // Get one item info
-export const getItemInfo = async (itemId: requestInfo) => {
+export const getItemInfo = async (itemId: number) => {
   try {
     const response = await fetch(`${window.location.origin}/api/items/get`, {
       method: "POST",

@@ -35,7 +35,7 @@ onMounted(getData)
           <td>{{ currentItem.display_name }}</td>
           <td>{{ currentItem.price }}</td>
           <td>
-            <!-- <RouterLink :to="`/item/${currentItem.item_id}`">to item</RouterLink> -->
+            <RouterLink :to="`/item/${currentItem.item_id}`">to item</RouterLink>
           </td>
 
         </tbody>
