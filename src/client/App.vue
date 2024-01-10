@@ -7,7 +7,7 @@ import * as GlobalState from "./model/global_state"
   <div>
     <nav class="navbar">
       <router-link to="/login">Login</router-link>
-      <router-link to="/">Home</router-link>
+      <router-link to="/">Item Page</router-link>
       <router-link v-if="GlobalState.userInfo.value === undefined" to="/register">Register</router-link>
       <router-link v-if="GlobalState.userInfo.value?.role.seller" to="/sellerHome">Seller Home</router-link>
       <router-link
