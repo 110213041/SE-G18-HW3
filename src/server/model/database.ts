@@ -98,7 +98,9 @@ const cartSchema = `--sql
       "user_id" INTEGER NOT NULL,
       "cart" TEXT NOT NULL,
       FOREIGN KEY ("user_id") REFERENCES member(id)
-    )
+    );
+
+    INSERT INTO cart ("user_id", "cart") VALUES (1, '[]');
 `;
 
 export type shopping_db = {
