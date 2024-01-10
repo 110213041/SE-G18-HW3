@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import NewCart from '../components/NewCart.vue';
+
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { username, password, email, userId, session, userInfo} from "../model/global_state";
-import { handleLogout} from "../model/global_state";
+import { username, password, email, userId, session, userInfo } from "../model/global_state";
+import { handleLogout } from "../model/global_state";
 import * as CartNew from "../controller/cart_new";
-import { 
+import {
   checkout,
   resetCart,
   changeItem,
@@ -39,8 +41,8 @@ const goShopping = () => {
         Item ID: {{ item.item_id }} - Quantity: {{ item.quantity }}
       </li>
     </ul> -->
+    <NewCart></NewCart>
 
-  
     <table>
       <thead>
         <tr>
