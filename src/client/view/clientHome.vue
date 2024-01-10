@@ -1,99 +1,16 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { username, password, email, userId, session, userInfo} from "../model/global_state";
 import { handleLogout} from "../model/global_state";
 import * as CartNew from "../controller/cart_new";
-
-/*
-const cartItems = ref([]);
-
-const fetchCartData = async () => {
-  // console.log(`${userId.value}, ${session.value}`)
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/get`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-      }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('getCart successful:', data.content);
-      if (data.type === 'cart') {
-        cartItems.value = data.content;
-      } else {
-        console.error('Unexpected response type:', data.type);
-      }
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-const resetCart = async () => {
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/clean`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('Cart reset successful');
-      fetchCartData();
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-// 新增函数，用于提交购物车内容
-const submitCart = async () => {
-  try {
-    const response = await fetch(`${window.location.origin}/api/cart/submit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: userId.value,
-        session: session.value,
-        cart: cartItems.value,
-      }),
-    });
-
-    if (response.ok) {
-      console.log('Cart submitted successfully');
-    
-      resetCart();
-    } else {
-      console.error('Request failed with status:', response.status);
-    }
-  } catch (error) {
-    console.error('Error during fetch:', error);
-  }
-};
-
-onMounted(() => {
-  fetchCartData();
-});
-
-*/
-
+import { 
+  checkout,
+  resetCart,
+  changeItem,
+  delItem,
+} from '../controller/cart_new';
+const router = useRouter();
 const cartItems = CartNew.cartItems;
 
 const resetCart = CartNew.resetCart;
@@ -103,23 +20,58 @@ onMounted(() => {
   CartNew.fetchCartData();
 });
 
+const goShopping = () => {
+  router.push('/item.vue');
+};
 </script>
 
 <template>
   <template v-if="userId !== undefined">
     <div class="welcome-container">
       <div>Hello: {{ username }}</div>
-      <button @click="handleLogout" class="logout-button">Logout</button>
+      <button @click="handleLogout()" class="logout-button">Logout</button>
     </div>
   </template>
   <div>
     <h2>Your Cart</h2>
-    <ul>
+    <!-- <ul>
       <li v-for="item in cartItems" :key="item.itemId">
         Item ID: {{ item.item_id }} - Quantity: {{ item.quantity }}
       </li>
-    </ul>
-    <button @click="resetCart">Reset Cart</button>
-    <button @click="submitCart">Submit Cart</button>
+    </ul> -->
+
+  
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Item ID</th>
+          <th>Item Name</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in cartItems" :key="item.item_id">
+          {{ item.item_id }} - {{ item.quantity }}
+          <td>{{ item.item_id }}</td>
+          <td>{{ item.display_name }}</td>
+          <td>${{ item.price }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>
+            <button @click="changeItem(item.item_id, item.quantity - 1)">+</button>
+            <button @click="changeItem(item.item_id, item.quantity + 1)">-</button>
+            <button @click="delItem(item.item_id)">移除</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button @click="resetCart()">清空</button>
+  <button @click="checkout()">結帳</button>
+  <div>
+    <h2>採購專區</h2>
+
   </div>
 </template>
