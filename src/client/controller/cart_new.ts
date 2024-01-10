@@ -112,7 +112,7 @@ export const changeItem = async (
 };
 
 // /cart/del 移除某項商品
-export const delItem = async (itemId: requestInfo) => {
+export const delItem = async (itemId: number) => {
   try {
     const response = await fetch(`${window.location.origin}/api/cart/del`, {
       method: "POST",

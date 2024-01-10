@@ -31,8 +31,8 @@ export const getItemInfo = async (itemId: number) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId,
-        session: session,
+        user_id: userId.value,
+        session: session.value,
         item_id: itemId,
       }),
     });
@@ -101,8 +101,8 @@ export const modifyItemStatus = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId,
-        session: session,
+        user_id: userId.value,
+        session: session.value,
         item_id: itemId,
         attribute: attribute,
         value: value,
@@ -135,8 +135,8 @@ export const createItem = async (
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId,
-        session: session,
+        user_id: userId.value,
+        session: session.value,
         item_name: itemName,
         item_price: itemPrice,
         item_description: itemDescription,
