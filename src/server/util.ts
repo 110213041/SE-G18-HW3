@@ -43,6 +43,6 @@ export async function getRequestBody(req: Request) {
 }
 
 export function isMethodJson(req: Request, method: "GET" | "POST"): boolean {
-  return req.method === method ||
+  return req.method === method &&
     req.headers.get("content-type") === "application/json";
 }
