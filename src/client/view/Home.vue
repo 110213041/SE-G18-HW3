@@ -19,7 +19,7 @@ onMounted(getData)
 </script>
 
 <template>
-  <h2>This is Home</h2>
+  <h2>商品列表</h2>
   <div id="item-list-wrapper" v-if="itemArray.length > 0">
     <div class="item-wrapper">
       <table>

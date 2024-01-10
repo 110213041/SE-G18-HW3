@@ -1,96 +1,71 @@
-
 <script lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref} from 'vue';
+import { useRouter } from 'vue-router';
 import { handleLogout} from "../model/global_state";
 import { username, password, email, userId, session, userInfo} from "../model/global_state";
+import { 
+  createItem,
+  getAllItems,
+  getItemInfo,
+  modifyItemStatus, 
+} from '../controller/items';
+
+const router = useRouter();
 
 export default {
-  setup() {
-    const orders = ref([]);
-    
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch('/api/orders');
-        if (response.ok) {
-          const data = await response.json();
-          orders.value = data;
-        } else {
-          console.error('獲取訂單失敗:', response.status);
-        }
-      } catch (error) {
-        console.error('獲取訂單時發生錯誤:', error);
-      }
-    };
-    
-    const confirmOrder = async (orderId) => {
-      // 用API確認訂單
-      // 將訂單狀態更新成'confirmed'
-      // 用 fetchOrders 刷新列表
-    };
-
-    const shipOrder = async (orderId) => {
-      // 用API標記訂單 'shipped'
-      // 用 fetchOrders 刷新列表
-    };
-    
-    onMounted(() => {
-      fetchOrders();
-    });
-    
+  data() {
     return {
-      orders,
-      confirmOrder,
-      shipOrder,
+      item_name: ref(''),
+      item_price: ref(0),
+      item_description: ref(''),
     };
   },
+}
+
+export const  item_name= ref('');
+export const  item_price= ref(0);
+export const  item_description= ref('');
+
+const goEditItem = () => {
+  router.push('/register');
+};
+const goGetOrder = () => {
+  router.push('/register');
 };
 </script>
+
 <template>
   <template v-if="userId !== undefined">
     <div class="welcome-container">
       <div>Hello: {{ username }}</div>
-      <button @click="handleLogout" class="logout-button">Logout</button>
+      <button @click="handleLogout()" class="logout-button">Logout</button>
     </div>
   </template>
+
   <div>
-    <h2>商家訂單</h2>
-    <div v-if="orders.length === 0">
-      <p>沒有定單。</p>
-    </div>
-    <div v-else>
-      <table>
-        <thead>
-          <tr>
-            <th>訂單編號</th>
-            <th>客戶ID</th>
-            <th>商品</th>
-            <th>狀態</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="order in orders" :key="order.orderId">
-            <td>{{ order.orderId }}</td>
-            <td>{{ order.customerName }}</td>
-            <td>
-              <ul>
-                <li v-for="item in order.items" :key="item.itemId">
-                  {{ item.name }} - 數量: {{ item.quantity }}
-                </li>
-              </ul>
-            </td>
-            <td>{{ order.status }}</td>
-            <td>
-              <button v-if="order.status === 'pending'" @click="confirmOrder(order.orderId)">
-                確認訂單
-              </button>
-              <button v-if="order.status === 'confirmed'" @click="shipOrder(order.orderId)">
-                出貨
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <router-link to="/" class="home-link">商品管理</router-link>
+  <br>
+    <router-link to="/register" class="register-link">訂單管理</router-link>
   </div>
+
+  <!-- <div>
+    <h2>新增商品</h2>
+    <form>
+      <div>
+        <label for="itemName">Item Name:</label>
+        <input v-model="item_name" type="text" id="itemName" class="form-input" />
+      </div>
+      <div>
+        <label for="itemPrice">Item Price:</label>
+        <input v-model.number="item_price" type="number" id="itemPrice" class="form-input" />
+      </div>
+      <div>
+        <label for="itemDescription">Item Description:</label>
+        <textarea  v-model="item_description" id="itemDescription" class="form-input"></textarea>
+      </div>
+      <button @click="createItem(item_name, item_price, item_description)">Submit</button>
+      
+    </form>
+  </div> -->
+
 </template>
