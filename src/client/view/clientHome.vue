@@ -2,7 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { username, password, email, userId, session, userInfo} from "../model/global_state";
 import { handleLogout} from "../model/global_state";
+import * as CartNew from "../controller/cart_new";
 
+/*
 const cartItems = ref([]);
 
 const fetchCartData = async () => {
@@ -90,6 +92,16 @@ onMounted(() => {
   fetchCartData();
 });
 
+*/
+
+const cartItems = CartNew.cartItems;
+
+const resetCart = CartNew.resetCart;
+const submitCart = CartNew.checkout;
+
+onMounted(() => {
+  CartNew.fetchCartData();
+});
 
 </script>
 
