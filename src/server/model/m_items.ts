@@ -102,3 +102,14 @@ export function alterItem(
     return false;
   }
 }
+
+export function getLastItemId() {
+  const query = DB.database.prepareQuery<never, { id: number }>(
+    `SELECT "id" FROM item ORDER BY "id" DESC LIMIT 1`,
+  );
+
+  const result = query.firstEntry();
+  query.finalize();
+
+  return result;
+}
