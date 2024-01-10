@@ -8,7 +8,7 @@ export type shipping_t = {
   item_price: number;
   item_description: string | null;
   quantity: number;
-  ship_status: 0 | 1 | 2 | 3;
+  ship_status: 0 | 1 | 2 | 3 | 4;
 };
 
 export type shopping_t = {
@@ -151,7 +151,10 @@ export const getShippingOrder = async (shippingOrder: number) => {
 };
 
 // // 改狀態
-export const alterState = async (shippingOrder: number, state: 1 | 2 | 3) => {
+export const alterState = async (
+  shippingOrder: number,
+  state: 1 | 2 | 3 | 4,
+) => {
   try {
     const response = await fetch(
       `${window.location.origin}/api/shipping/alter`,

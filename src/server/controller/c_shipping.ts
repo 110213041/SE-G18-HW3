@@ -87,7 +87,7 @@ async function alterHandler(req: Request) {
     return util.statusResponse(403);
   }
 
-  if (alterRequest.state < 1 || alterRequest.state > 3) {
+  if (alterRequest.state < 1 || alterRequest.state > 4) {
     return util.statusResponse(400);
   }
 
@@ -98,11 +98,13 @@ async function alterHandler(req: Request) {
 
   const userRole = AccountModel.getUserRoleById(alterRequest.id);
 
-  if (userRole.seller && alterRequest.state !== 1) {
+  if (
+    userRole.seller && (alterRequest.state !== 1 && alterRequest.state !== 2)
+  ) {
     return util.statusResponse(403);
   }
 
-  if (userRole.shipper && alterRequest.state !== 2) {
+  if (userRole.shipper && alterRequest.state !== 3) {
     return util.statusResponse(403);
   }
 

@@ -12,10 +12,11 @@ const props = defineProps<{
 const shipping = props.value
 
 const shippingStatusRecord: Record<number, string> = {
-  0: "收到訂單",
-  1: "出貨",
-  2: "商品已送達",
-  3: "成功收貨"
+  0: "送出訂單",
+  1: "商家收到訂單",
+  2: "出貨",
+  3: "商品已送達",
+  4: "成功收貨"
 }
 
 const rate: Ref<number | undefined> = ref();
@@ -75,16 +76,18 @@ onMounted(async () => {
         <td>{{ shippingStatusRecord[shipping.ship_status] }}</td>
 
         <button v-if="userInfo?.role.seller" :disabled="shipping.ship_status != 0"
-          @click="alterState(shipping.id, 1)">可以出貨</button>
-        <button v-if="userInfo?.role.shipper" :disabled="shipping.ship_status != 1"
-          @click="alterState(shipping.id, 2)">送達客人地址</button>
+          @click="alterState(shipping.id, 1)">確認訂單</button>
+        <button v-if="userInfo?.role.seller" :disabled="shipping.ship_status != 1"
+          @click="alterState(shipping.id, 2)">可以出貨</button>
+        <button v-if="userInfo?.role.shipper" :disabled="shipping.ship_status != 2"
+          @click="alterState(shipping.id, 3)">送達客人地址</button>
         <button v-if="userInfo?.role.seller === false && userInfo?.role.shipper === false"
-          :disabled="shipping.ship_status !== 2" @click="alterState(shipping.id, 3)">取貨確認</button>
+          :disabled="shipping.ship_status !== 3" @click="alterState(shipping.id, 4)">取貨確認</button>
       </tr>
 
 
       <template
-        v-if="(userInfo?.role.seller === false && userInfo?.role.shipper === false) && shipping.ship_status === 3">
+        v-if="(userInfo?.role.seller === false && userInfo?.role.shipper === false) && shipping.ship_status === 4">
         <tr>
           <td>Rate: </td>
           <td>
