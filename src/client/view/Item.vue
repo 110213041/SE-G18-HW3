@@ -1,16 +1,29 @@
 <script lang="ts" setup>
-import { updateCartItem } from "../controller/cart";
-import { cart } from "../model/global_state";
-import { ref, type Ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { Ref, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import * as Items from '../controller/items';
+import { changeItem } from '../controller/cart_new';
+import { getItemInfo, type item_t ,type requestInfo} from "../controller/items"
 
 const route = useRoute();
+const id = route.params.id as unknown as number;
+
+let itemArray: Ref<item_t[]> = ref([]);
+
+async function getData() {
+  const resp = await getItemInfo(id);
+  resultJson.value = resp;
+  isLoading.value = false;
+  if (resp === undefined) {
+    throw new Error("getItemInfo response undefined")
+  }
+  itemArray.value = resp
+}
 
 // Module
-const id = route.params.id as string;
 
 type dbResponse = {
-  status: "success";
+  status: 'success';
   result: {
     id: number;
     display_name: string;
@@ -20,50 +33,12 @@ type dbResponse = {
     owner_name: string;
   };
 } | {
-  status: "fail";
+  status: 'fail';
   message: string;
 };
-
-const resultJson: Ref<dbResponse> = ref({ status: "fail", message: "" });
+const resultJson = ref<dbResponse>({ status: 'fail', message: '' });
 const isLoading = ref(true);
-
-
-// Control
-function addOne(id: number) {
-  if (resultJson.value.status === "fail") {
-    return;
-  }
-
-  const target = resultJson.value.result
-  const targetIndex = cart.value.findIndex(v => v.itemId === target.id)
-
-  if (targetIndex < 0) {
-    updateCartItem(id, 1);
-    return;
-  }
-
-  updateCartItem(id, cart.value[targetIndex].quantity + 1);
-}
-
-async function getData() {
-  isLoading.value = false;
-
-  const queryUrl = new URL(location.origin);
-  queryUrl.pathname = "/api/item";
-  queryUrl.searchParams.set("q", id);
-
-  try {
-    const resp = await fetch(queryUrl.href)
-    const respJson: dbResponse = await resp.json()
-    resultJson.value = respJson
-  } catch (e) {
-    console.error(e)
-  }
-
-  isLoading.value = false;
-}
-
-onMounted(getData)
+onMounted(getData);
 </script>
 
 
@@ -78,36 +53,28 @@ onMounted(getData)
         </thead>
         <tbody>
           <tr>
-            <td>name</td>
+            <td>Item Name:</td>
             <td>{{ resultJson.result.display_name }}</td>
           </tr>
           <tr>
-            <td>price</td>
+            <td>Price:</td>
             <td>{{ resultJson.result.price }}</td>
           </tr>
           <tr>
-            <td>description</td>
+            <td>Description:</td>
             <td>{{ resultJson.result.description }}</td>
           </tr>
-          <tr>
-            <td>seller</td>
-            <td>{{ resultJson.result.owner_name }}</td>
-          </tr>
         </tbody>
-
-        <button @click="addOne(resultJson.result.id)"> add to cart </button>
       </table>
-
+      <button @click="changeItem(itemArray.id , 1)">Add to Cart</button>
     </div>
-
-
     <div v-else>
-      <p>sorry item not found!</p>
+      <p>Sorry, item not found!</p>
     </div>
   </template>
   <template v-else>
-    <p>loading</p>
+    <p>Loading...</p>
   </template>
 </template>
-<style></style>
 
+<style></style>
