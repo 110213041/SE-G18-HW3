@@ -60,6 +60,24 @@ export function createNewAccount(
   return true;
 }
 
+export function createNewAccountRole(userId: number, role_id: 1 | 2) {
+  try {
+    DB.database.transaction(() => {
+      const stmt = DB.database.prepareQuery(`--sql
+        INSERT INTO member_role ("user_id", "role") VALUES (?, ?);
+      `);
+
+      stmt.execute([userId, role_id]);
+      stmt.finalize();
+    });
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+
+  return true;
+}
+
 export function createNewSession(userId: number) {
   const newSessionId = crypto.randomUUID();
   const lifeTime = Date.now() + 60 * 60 * 24 * 365 * 1000;

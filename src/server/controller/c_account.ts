@@ -42,6 +42,7 @@ type register_request = {
   name: string;
   email: string;
   password: string;
+  as_shipper?: boolean;
 };
 
 function registerProcess(payload: register_request) {
@@ -82,6 +83,24 @@ async function registerHandler(req: Request) {
       ) {
         return util.statusResponse(500);
       }
+
+      if (
+        registerRequest.as_shipper !== undefined &&
+        registerRequest.as_shipper === true
+      ) {
+        if (
+          !AccountModel.createNewAccountRole(
+            AccountModel.getIdByUserEmail(
+              registerRequest.name,
+              registerRequest.email,
+            )!.id,
+            1,
+          )
+        ) {
+          return util.statusResponse(500);
+        }
+      }
+
       return util.statusResponse(201);
     } else {
       return util.statusResponse(403);
