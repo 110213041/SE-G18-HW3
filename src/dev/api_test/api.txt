@@ -257,6 +257,33 @@
         403 Auth Fail.
         405  Wrong method or not providing id and session.
 
+  /create
+    Create item
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_name: string
+          item_price: number
+          item_description: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "item_create",
+          content: (/item/get.content 輸出)
+        }
+
+      Fail:
+        400
+        403
+        405
+
 /shopping
   /all
     Request:
