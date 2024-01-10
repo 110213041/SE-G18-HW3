@@ -115,13 +115,13 @@ export function alterShipping(
 ) {
   const stmt = DB.database.prepareQuery(`--sql
     UPDATE shipping
-    SET ? = ?
+    SET ${attribute} = ?
     WHERE id = ?
   `);
 
   DB.database.transaction(() => {
     try {
-      stmt.execute([attribute, value, id]);
+      stmt.execute([value, id]);
       return true;
     } catch (e) {
       console.error(e);

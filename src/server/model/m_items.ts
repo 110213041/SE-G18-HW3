@@ -87,14 +87,14 @@ export function alterItem(
   const stmt = DB.database.prepareQuery<
     never,
     never,
-    [string, string | number, number]
+    [string | number, number]
   >(`--sql
-  UPDATE item SET ? = ? WHERE id = ?
+  UPDATE item SET ${attribute} = ? WHERE id = ?
   `);
 
   try {
     DB.database.transaction(() => {
-      stmt.execute([attribute, value, item_id]);
+      stmt.execute([value, item_id]);
     });
     return true;
   } catch (e) {
