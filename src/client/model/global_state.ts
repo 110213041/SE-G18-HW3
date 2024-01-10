@@ -1,6 +1,6 @@
-import { type Ref, ref, nextTick } from "vue";
-import { useRouter } from 'vue-router';
-import {router} from "../controller/router";
+import { nextTick, type Ref, ref } from "vue";
+import { useRouter } from "vue-router";
+import { router } from "../controller/router";
 // const router = useRouter();
 export type cartItem = {
   itemId: number;
@@ -42,26 +42,25 @@ export type role = {
   seller: boolean;
   shipper: boolean;
 };
-export function findHome(role:role) {
-  if ( role.seller) {
-    return '/sellerHome';
+export function findHome(role: role) {
+  if (role.seller) {
+    return "/sellerHome";
   } else if (role.shipper) {
-    return '/shipperHome';
+    return "/shipperHome";
   } else {
-    return '/clientHome';
+    return "/clientHome";
   }
 }
 
-
 // 登出
 const logout = async () => {
-  username.value = ""
-  password.value = ""
-  email.value = ""
-  userId.value = 0
-  session.value = ""
-  userInfo.value = undefined
-}
+  username.value = "";
+  password.value = "";
+  email.value = "";
+  userId.value = 0;
+  session.value = "";
+  userInfo.value = undefined;
+};
 export const handleLogout = async () => {
   await logout();
 
@@ -71,10 +70,18 @@ export const handleLogout = async () => {
 
   // 檢查 router 是否已定義，然後進行導航
   if (router) {
-    router.push('/login');
+    router.push("/login");
   } else {
-    console.error('router is undefined');
+    console.error("router is undefined");
   }
 };
 
+const savedSession = sessionStorage.getItem("save_state");
+if (savedSession !== null) {
+  const result = JSON.parse(savedSession);
 
+  userId.value = result.userId;
+  session.value = result.session;
+  userInfo.value = result.userInfo;
+  username.value = userInfo.value!.user_name;
+}

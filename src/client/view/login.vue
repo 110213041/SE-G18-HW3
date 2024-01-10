@@ -58,12 +58,15 @@ const login = async () => {
           // 處理成功取得用戶資訊的回應
           if (userInfoData.type === 'user_info') {
             console.log('User Info:', userInfoData.content);
+
+
             const role = userInfoData.content.role;
             console.log('Role:', role);
             if (role) {
               const homePath = findHome(role);
               router.push(homePath);
               userInfo.value = userInfoData.content
+              sessionStorage.setItem("save_state", JSON.stringify({ userId: userId.value, session: session.value, userInfo: userInfoData.content }))
             } else {
               console.error('Role is undefined or null');
             }
@@ -111,6 +114,7 @@ const logout = async () => {
   userId.value = 0
   session.value = ""
   userInfo.value = undefined
+  sessionStorage.removeItem("save_state")
 }
 </script>
 
