@@ -76,8 +76,8 @@ export const resetCart = async () => {
 
 // /cart/set 設定某項商品在購物車裡總數
 export const changeItem = async (
-  itemId: requestInfo,
-  quantity: requestInfo,
+  itemId: number,
+  quantity: number,
 ) => {
   try {
     const response = await fetch(`${window.location.origin}/api/cart/set`, {
