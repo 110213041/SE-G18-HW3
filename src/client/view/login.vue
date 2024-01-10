@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { username, password, email, userId, session, userInfo} from "../model/global_state";
+import { username, password, email, userId, session, userInfo } from "../model/global_state";
 import { findHome } from "../model/global_state";
 
 // 全域狀態管理使用者輸入的數據
@@ -63,19 +63,20 @@ const login = async () => {
             if (role) {
               const homePath = findHome(role);
               router.push(homePath);
-              } else {
-                console.error('Role is undefined or null');
-              }
+              userInfo.value = userInfoData.content
+            } else {
+              console.error('Role is undefined or null');
+            }
 
 
             // const homePath = findHome(userInfo.role);
             // router.push(homePath);
+          } else {
+            console.error('Failed to get user info:', infoResponse.statusText);
+          }
         } else {
-          console.error('Failed to get user info:', infoResponse.statusText);
+          console.error('Unexpected response format:', data);
         }
-      } else {
-        console.error('Unexpected response format:', data);
-      }
       } else {
         // 處理登入失敗的情況
         console.error('Login failed:', response.statusText);
@@ -90,11 +91,11 @@ const login = async () => {
         }
       }
     }
-  } 
+  }
   catch (error) {
     console.error('Error during login:', error);
   }
-  
+
 };
 
 // 前往註冊頁面的方法
@@ -121,7 +122,7 @@ const logout = async () => {
     </div>
   </template>
 
-  <div v-else >
+  <div v-else>
     <div class="login-container">
       <h2>Login Page</h2>
 
@@ -186,7 +187,7 @@ h2 {
 }
 
 .login-button:hover {
-  background-color: #4caf49 ; 
+  background-color: #4caf49;
 }
 
 .register-link {
