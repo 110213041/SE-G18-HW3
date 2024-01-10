@@ -2,6 +2,8 @@
 import { onMounted, ref, type Ref } from 'vue';
 import { handleLogout } from "../model/global_state";
 import { username, userId } from "../model/global_state";
+import { createItem } from "../controller/items"
+
 
 import * as Items from '../controller/items';
 import * as Order from "../controller/order"
@@ -29,6 +31,10 @@ onMounted(async () => {
   allShipment.value = respShipping.filter(v => v.seller_id === userId.value)
 })
 
+const newName = ref("")
+const newPrice = ref(-1)
+const newDescription = ref("")
+
 </script>
 
 <template>
@@ -44,6 +50,28 @@ onMounted(async () => {
       <SellerItem :value="item"></SellerItem>
     </template>
 
+    <h3>新增產品</h3>
+
+    <section id="create-new-item">
+      <div>
+        <span>Item name: </span>
+        <input type="text" v-model.trim="newName">
+      </div>
+
+      <div>
+        <span>Item price: </span>
+        <input type="number" v-model="newPrice">
+      </div>
+
+      <div>
+        <span>Item description: </span>
+        <textarea cols="30" rows="10" v-model="newDescription"></textarea>
+      </div>
+
+      <button :disabled="newName === '' || newPrice < 0 || newDescription === ''"
+        @click="createItem(newName, newPrice, newDescription)">create new item</button>
+    </section>
+
   </section>
 
   <section>
@@ -55,3 +83,12 @@ onMounted(async () => {
     </template>
   </section>
 </template>
+
+<style scoped>
+section [id="create-new-item"] {
+  border: 1px solid grey;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+</style>
