@@ -1,13 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { username, password, email, userId, session, userInfo } from "../model/global_state";
 import { findHome } from "../model/global_state";
 
-// 全域狀態管理使用者輸入的數據
-//const username = ref('');
-//const password = ref('');
-const loginResponse = ref(null);
+
 // 使用Vue Router的實例
 const router = useRouter();
 
@@ -35,9 +31,6 @@ const login = async () => {
         // 將 user_info 和 session 存儲到相應的變數中
         userId.value = data.content.user_id;
         session.value = data.content.session;
-        // console.log('data:', data);
-        // console.log('data.content:', data.content);
-        // console.log('data.content.user_id:', data.content.user_id);
 
         // 使用 user_info 和 session 去取得用戶資訊
         const infoResponse = await fetch(`${window.location.origin}/api/account/info`, {
@@ -71,9 +64,6 @@ const login = async () => {
               console.error('Role is undefined or null');
             }
 
-
-            // const homePath = findHome(userInfo.role);
-            // router.push(homePath);
           } else {
             console.error('Failed to get user info:', infoResponse.statusText);
           }

@@ -60,6 +60,7 @@ const logout = async () => {
   userId.value = 0;
   session.value = "";
   userInfo.value = undefined;
+  sessionStorage.removeItem("save_state");
 };
 export const handleLogout = async () => {
   await logout();

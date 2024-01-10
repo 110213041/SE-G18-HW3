@@ -1,16 +1,4 @@
-import {
-  email,
-  password,
-  session,
-  userId,
-  userInfo,
-  username,
-} from "../model/global_state";
-import { handleLogout } from "../model/global_state";
-import { useRouter } from "vue-router";
-// import { orderId } from "./cart_new";
-// import { State} from "../view/shipperHome.vue";
-// import { rate } from "../view/clientHome.vue";
+import { session, userId } from "../model/global_state";
 
 export type shipping_t = {
   id: number;
@@ -29,7 +17,7 @@ export type shopping_t = {
 };
 
 export type shopping_order_t = Pick<shopping_t, "id"> & {
-  shipping: shipping_t;
+  shipping: shipping_t[];
 };
 
 //取得所有結帳記錄
@@ -205,18 +193,21 @@ export const giveRate = async (
   rate: 1 | 2 | 3 | 4 | 5,
 ) => {
   try {
-    const response = await fetch(`${window.location.origin}/api/shipping/get`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${window.location.origin}/api/shipping/rate`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId.value,
+          session: session.value,
+          shipping_order: shippingOrder,
+          rate: rate,
+        }),
       },
-      body: JSON.stringify({
-        id: userId.value,
-        session: session.value,
-        shipping_order: shippingOrder,
-        rate: rate,
-      }),
-    });
+    );
 
     if (response.ok) {
       console.log("rate successful");
@@ -232,20 +223,22 @@ export const giveRate = async (
 };
 
 //看評分
-export const getRate = async (shippingOrder: number, rate: number) => {
+export const getRate = async (shippingOrder: number) => {
   try {
-    const response = await fetch(`${window.location.origin}/api/shipping/get`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${window.location.origin}/api/shipping/rate_get`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId.value,
+          session: session.value,
+          shipping_order: shippingOrder,
+        }),
       },
-      body: JSON.stringify({
-        id: userId.value,
-        session: session.value,
-        shipping_order: shippingOrder,
-        rate: rate,
-      }),
-    });
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -256,6 +249,9 @@ export const getRate = async (shippingOrder: number, rate: number) => {
       } else {
         console.error("Unexpected response type:", data.type);
       }
+    } else if (response.status === 404) {
+      console.log(`cannot find shipping: ${shippingOrder} rate.`);
+      return undefined;
     } else {
       console.error("Failed to get rate:", response.statusText);
     }

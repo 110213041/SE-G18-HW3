@@ -1,12 +1,4 @@
-import { onMounted, ref } from "vue";
-import {
-  email,
-  password,
-  session,
-  userId,
-  userInfo,
-  username,
-} from "../model/global_state";
+import { session, userId } from "../model/global_state";
 
 export type requestInfo = {
   itemId: number;
@@ -90,7 +82,7 @@ type modifyItemParams =
 
 // Modify item status
 export const modifyItemStatus = async (
-  itemId: requestInfo,
+  itemId: number,
   attribute: modifyItemParams[0],
   value: modifyItemParams[1],
 ) => {

@@ -1,13 +1,6 @@
 // import { type Ref, ref, watch } from "vue";
 import { onMounted, type Ref, ref } from "vue";
-import {
-  email,
-  password,
-  session,
-  userId,
-  userInfo,
-  username,
-} from "../model/global_state";
+import { session, userId } from "../model/global_state";
 
 export const cartItems: Ref<{ item_id: number; quantity: number }[]> = ref([]);
 export const orderId: Ref<number> = ref(0);
@@ -17,7 +10,6 @@ export type requestInfo = {
 };
 // 抓使用者的購物車/cart/get
 export const fetchCartData = async () => {
-  // console.log(`${userId.value}, ${session.value}`)
   try {
     const response = await fetch(`${window.location.origin}/api/cart/get`, {
       method: "POST",

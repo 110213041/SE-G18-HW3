@@ -13,15 +13,12 @@ import {
   delItem,
 } from '../controller/cart_new';
 
+import Shopping from '../components/Shopping.vue';
+
 import * as Items from "../controller/items"
+import * as Order from "../controller/order"
 
 const cartItems = CartNew.cartItems;
-
-
-onMounted(async () => {
-  await CartNew.fetchCartData();
-  await showCart()
-});
 
 type _item_t =
   Pick<Items.item_t, "item_id" | "display_name" | "price"> & {
@@ -60,10 +57,21 @@ function calcTotal(target: Ref<number>) {
   return total
 }
 
+const shoppingOrder: Ref<Order.shopping_order_t[]> = ref([])
+
 watch(cartItems, async () => {
   await showCart()
   calcTotal(renderTotalCost)
 })
+
+onMounted(async () => {
+  await CartNew.fetchCartData();
+  await showCart()
+
+  const _shippingOrder = await Order.getAllShoppingOrder()
+  if (_shippingOrder === undefined) throw new Error("fail to fetch shipping order")
+  shoppingOrder.value = _shippingOrder
+});
 </script>
 
 <template>
@@ -112,6 +120,11 @@ watch(cartItems, async () => {
   <button @click="resetCart()">清空</button>
   <button @click="checkout()">結帳</button>
   <div>
-    <h2>採購專區</h2>
+    <h2>訂單</h2>
+
+    <template v-for="shopping in shoppingOrder">
+      <Shopping :value="shopping"></Shopping>
+    </template>
+
   </div>
 </template>

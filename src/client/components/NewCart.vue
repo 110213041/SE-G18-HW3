@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, type Ref } from "vue"
 
-import * as GlobalState from "../model/global_state"
 import * as NewCart from "../controller/cart_new"
 import * as Items from "../controller/items"
 

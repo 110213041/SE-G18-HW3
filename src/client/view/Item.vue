@@ -8,8 +8,6 @@ import * as GlobalState from "../model/global_state"
 const route = useRoute();
 const id = route.params.id as unknown as number;
 
-// let itemArray: Ref<item_t[]> = ref([]);
-
 const itemValue: Ref<Items.item_t | undefined> = ref()
 
 async function getData() {

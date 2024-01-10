@@ -1,21 +1,19 @@
 <script lang="ts" setup>
 import { RouterView } from 'vue-router';
-import Cart from './components/Cart.vue';
-
+import * as GlobalState from "./model/global_state"
 </script>
 
 <template>
   <div>
-    <!-- <Cart class="cart"></Cart> -->
     <nav class="navbar">
       <router-link to="/login">Login</router-link>
       <router-link to="/">Home</router-link>
-      <router-link to="/register">Register</router-link>
-      <router-link to="/about">About</router-link>
-      <router-link to="/seller">Seller</router-link>
-      <router-link to="/sellerHome">Seller Home</router-link>
-      <router-link to="/clientHome">Client Home</router-link>
-      <router-link to="/shipperHome">Shipper Home</router-link>
+      <router-link v-if="GlobalState.userInfo.value === undefined" to="/register">Register</router-link>
+      <router-link v-if="GlobalState.userInfo.value?.role.seller" to="/sellerHome">Seller Home</router-link>
+      <router-link
+        v-if="GlobalState.userInfo.value?.role.seller === false && GlobalState.userInfo.value?.role.shipper === false"
+        to="/clientHome">Client Home</router-link>
+      <router-link v-if="GlobalState.userInfo.value?.role.shipper" to="/shipperHome">Shipper Home</router-link>
     </nav>
     <router-view></router-view>
   </div>

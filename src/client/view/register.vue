@@ -81,13 +81,8 @@ label {
 
 
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { username, password, email } from "../model/global_state";
-// 全域狀態管理使用者輸入的數據
-// const username = ref('');
-// const email = ref('');
-// const password = ref('');
 
 // 使用Vue Router的實例
 const router = useRouter();

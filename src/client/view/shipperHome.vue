@@ -1,58 +1,44 @@
 <script lang="ts" setup>
-import { username, password, email, userId, session, userInfo} from "../model/global_state";
-import { handleLogout} from "../model/global_state";
-import { useRouter } from 'vue-router';
+import { ref, type Ref, onMounted } from "vue"
 
-const router = useRouter();
-const getAllShippingOrder = async () => {
-  console.log(`${userId.value}, ${session.value}`)
-  try {
-  const response = await fetch(`${window.location.origin}/api/shipping/all`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      id: userId.value,
-      session: session.value,
-    }),
-  });
+import { username } from "../model/global_state";
+import { handleLogout } from "../model/global_state";
 
-  if (response.ok) {
-    const data = await response.json();
+import Shipping from "../components/Shipping.vue";
 
-    // 處理成功獲取的運輸單數據
-    if (data.type === "shipment_all") {
-      const shipmentList = data.content;
-      console.log("Shipment List:", shipmentList);
-    } else {
-      console.error("Unexpected response type:", data.type);
-    }
-  } else {
-    console.error("Failed to fetch shipment list:", response.statusText);
+
+import * as Order from "../controller/order"
+
+
+const allShipment: Ref<Order.shipping_t[]> = ref([])
+
+onMounted(async () => {
+
+
+  const respShipping = await Order.getAllShippingOrder()
+  if (respShipping === undefined) {
+    throw new Error("fail to fetch items")
   }
-} catch (error) {
-  console.error("Error during fetch:", error);
-}
-};
 
-
-
+  allShipment.value = respShipping
+})
 
 
 </script>
 
 <template>
-<h3>this is shipper's home</h3>
-<template v-if="userId !== undefined">
-  <div class="welcome-container">
+  <h2>this is shipper's home</h2>
+  <section class="welcome-container">
     <div>Hello: {{ username }}</div>
-    <button @click="handleLogout" class="logout-button">Logout</button>
-  </div>
-</template>
-<button @click="getAllShippingOrder" class="det-all-oder">取得所有訂單</button>
+    <button @click="handleLogout()" class="logout-button">Logout</button>
+  </section>
+
+  <section>
+    <h2>所有運輸單</h2>
+    <template v-for="ship in allShipment">
+      <Shipping :value="ship"></Shipping>
+    </template>
+  </section>
 </template>
 
-<style>
-
-</style>
+<style></style>
