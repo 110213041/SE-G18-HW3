@@ -1,39 +1,17 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, Ref } from 'vue';
 import { RouterLink } from 'vue-router';
 
-const isLoading = ref(true);
+import { getAllItems, type item_t } from "../controller/items"
 
-type item = {
-  id: number;
-  display_name: string;
-  price: number;
-  description: string;
-  owner_id: number;
-  owner_name: string;
-};
-
-type dbResponse = item & { state: number };
-
-let itemArray: item[] = [];
+let itemArray: Ref<item_t[]> = ref([]);
 
 async function getData() {
-  isLoading.value = true
-
-  const queryUrl = new URL(location.origin);
-  queryUrl.pathname = "/api/item";
-  queryUrl.searchParams.set("a", "getall");
-
-  try {
-    const resp = await fetch(queryUrl.href);
-    const respJson: dbResponse[] = await resp.json();
-
-    itemArray = respJson.filter(v => v.state === 1);
-  } catch (e) {
-    console.error(e)
+  const resp = await getAllItems()
+  if (resp === undefined) {
+    throw new Error("getAllItems response undefined")
   }
-
-  isLoading.value = false
+  itemArray.value = resp
 }
 
 onMounted(getData)
@@ -41,37 +19,37 @@ onMounted(getData)
 </script>
 
 <template>
-  <h2>This is Home</h2>
-  <template v-if="!isLoading">
-    <div id="item-list-wrapper" v-if="itemArray.length > 0">
-      <div class="item-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>name</th>
-              <th>price</th>
-              <th></th>
-            </tr>
-          </thead>
+  <h2>商品列表</h2>
+  <div id="item-list-wrapper" v-if="itemArray.length > 0">
+    <div class="item-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>name</th>
+            <th>price</th>
+            <th></th>
+          </tr>
+        </thead>
 
-          <tbody v-for="currentItem in itemArray">
-            <td>{{ currentItem.display_name }}</td>
-            <td>{{ currentItem.price }}</td>
-            <td>
-              <RouterLink :to="`/item/${currentItem.id}`">to item</RouterLink>
-            </td>
+        <tbody v-for="currentItem in itemArray">
+          <td>{{ currentItem.display_name }}</td>
+          <td>{{ currentItem.price }}</td>
+          <td>
+            <RouterLink :to="`/item/${currentItem.item_id}`">to item</RouterLink>
+          </td>
 
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
-  </template>
+  </div>
 </template>
 <style scoped>
 /* styles.css */
 
 /* Reset some default margin and padding */
-body, h2, table {
+body,
+h2,
+table {
   margin: 0;
   padding: 0;
 }
@@ -116,5 +94,4 @@ td a {
   padding: 5px 10px;
   border-radius: 5px;
 }
-
 </style>

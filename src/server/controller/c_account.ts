@@ -1,5 +1,7 @@
 import * as util from "../util.ts";
 import * as AccountModel from "../model/m_account.ts";
+import * as CartModel from "../model/m_cart.ts";
+
 type login_request = {
   name: string;
   password: string;
@@ -40,6 +42,7 @@ type register_request = {
   name: string;
   email: string;
   password: string;
+  as_shopper?: boolean;
 };
 
 function registerProcess(payload: register_request) {
@@ -70,6 +73,34 @@ async function registerHandler(req: Request) {
     ) return util.statusResponse(400);
 
     if (registerProcess(registerRequest)) {
+      if (
+        !CartModel.createCart(
+          AccountModel.getIdByUserEmail(
+            registerRequest.name,
+            registerRequest.email,
+          )!.id,
+        )
+      ) {
+        return util.statusResponse(500);
+      }
+
+      if (
+        registerRequest.as_shopper !== undefined &&
+        registerRequest.as_shopper === true
+      ) {
+        if (
+          !AccountModel.createNewAccountRole(
+            AccountModel.getIdByUserEmail(
+              registerRequest.name,
+              registerRequest.email,
+            )!.id,
+            1,
+          )
+        ) {
+          return util.statusResponse(500);
+        }
+      }
+
       return util.statusResponse(201);
     } else {
       return util.statusResponse(403);

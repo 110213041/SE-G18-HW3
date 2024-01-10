@@ -1,113 +1,54 @@
 <script lang="ts" setup>
-import { updateCartItem } from "../controller/cart";
-import { cart } from "../model/global_state";
-import { ref, type Ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { Ref, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import * as Items from '../controller/items';
+import * as NewCart from '../controller/cart_new';
+import * as GlobalState from "../model/global_state"
 
 const route = useRoute();
+const id = route.params.id as unknown as number;
 
-// Module
-const id = route.params.id as string;
-
-type dbResponse = {
-  status: "success";
-  result: {
-    id: number;
-    display_name: string;
-    price: number;
-    description: string;
-    owner_id: number;
-    owner_name: string;
-  };
-} | {
-  status: "fail";
-  message: string;
-};
-
-const resultJson: Ref<dbResponse> = ref({ status: "fail", message: "" });
-const isLoading = ref(true);
-
-
-// Control
-function addOne(id: number) {
-  if (resultJson.value.status === "fail") {
-    return;
-  }
-
-  const target = resultJson.value.result
-  const targetIndex = cart.value.findIndex(v => v.itemId === target.id)
-
-  if (targetIndex < 0) {
-    updateCartItem(id, 1);
-    return;
-  }
-
-  updateCartItem(id, cart.value[targetIndex].quantity + 1);
-}
+const itemValue: Ref<Items.item_t | undefined> = ref()
 
 async function getData() {
-  isLoading.value = false;
-
-  const queryUrl = new URL(location.origin);
-  queryUrl.pathname = "/api/item";
-  queryUrl.searchParams.set("q", id);
-
-  try {
-    const resp = await fetch(queryUrl.href)
-    const respJson: dbResponse = await resp.json()
-    resultJson.value = respJson
-  } catch (e) {
-    console.error(e)
-  }
-
-  isLoading.value = false;
+  const resp = await Items.getItemInfo(id);
+  itemValue.value = resp
 }
 
-onMounted(getData)
+onMounted(getData);
+
+function isValidClient() {
+  const userInfo = GlobalState.userInfo.value;
+
+  if (userInfo === undefined) return true;
+
+  return !(!userInfo.role.seller && !userInfo.role.shipper)
+}
+
+
 </script>
 
 
 <!-- View -->
 <template>
   <h2>This is Item {{ id }} Page</h2>
-  <template v-if="!isLoading">
-    <div v-if="resultJson.status === 'success'">
-      <table>
-        <thead>
-          <th colspan="2">Item {{ id }}</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>name</td>
-            <td>{{ resultJson.result.display_name }}</td>
-          </tr>
-          <tr>
-            <td>price</td>
-            <td>{{ resultJson.result.price }}</td>
-          </tr>
-          <tr>
-            <td>description</td>
-            <td>{{ resultJson.result.description }}</td>
-          </tr>
-          <tr>
-            <td>seller</td>
-            <td>{{ resultJson.result.owner_name }}</td>
-          </tr>
-        </tbody>
 
-        <button @click="addOne(resultJson.result.id)"> add to cart </button>
-      </table>
+  <table>
+    <tr>
+      <td>Name: </td>
+      <td>{{ itemValue?.display_name }}</td>
+    </tr>
+    <tr>
+      <td>Price: </td>
+      <td>{{ itemValue?.price }}</td>
+    </tr>
+    <tr>
+      <td>Description: </td>
+      <td>{{ itemValue?.description }}</td>
+    </tr>
+  </table>
 
-    </div>
-
-
-    <div v-else>
-      <p>sorry item not found!</p>
-    </div>
-  </template>
-  <template v-else>
-    <p>loading</p>
-  </template>
+  <button type="button" :disabled="isValidClient()" @click="NewCart.changeItem(id, 1)">add to cart</button>
 </template>
-<style></style>
 
+<style></style>

@@ -11,6 +11,27 @@ export function getLastShipId() {
   return result;
 }
 
+export function getShippingAll() {
+  const query = DB.database.prepareQuery<never, DB.shipping_db>(`--sql
+    SELECT 
+      "id",
+      "seller_id",
+      "item_id",
+      "item_name",
+      "item_price",
+      "item_description",
+      "quantity",
+      "ship_status"
+    FROM
+      shipping
+  `);
+
+  const result = query.allEntries();
+  query.finalize();
+
+  return result;
+}
+
 export function getShippingById(id: number) {
   const query = DB.database.prepareQuery<never, DB.shipping_db>(`--sql
     SELECT 
@@ -61,7 +82,7 @@ export function createShipping(newItem: Omit<DB.shipping_db, "id">) {
       "seller_id",
       "item_id",
       "item_name",
-      "item_prince",
+      "item_price",
       "item_description",
       "quantity",
       "ship_status"
@@ -94,13 +115,13 @@ export function alterShipping(
 ) {
   const stmt = DB.database.prepareQuery(`--sql
     UPDATE shipping
-    SET ? = ?
+    SET ${attribute} = ?
     WHERE id = ?
   `);
 
   DB.database.transaction(() => {
     try {
-      stmt.execute([attribute, value, id]);
+      stmt.execute([value, id]);
       return true;
     } catch (e) {
       console.error(e);

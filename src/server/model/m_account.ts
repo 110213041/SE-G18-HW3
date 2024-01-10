@@ -60,6 +60,24 @@ export function createNewAccount(
   return true;
 }
 
+export function createNewAccountRole(userId: number, role_id: 1 | 2) {
+  try {
+    DB.database.transaction(() => {
+      const stmt = DB.database.prepareQuery(`--sql
+        INSERT INTO member_role ("user_id", "role") VALUES (?, ?);
+      `);
+
+      stmt.execute([userId, role_id]);
+      stmt.finalize();
+    });
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+
+  return true;
+}
+
 export function createNewSession(userId: number) {
   const newSessionId = crypto.randomUUID();
   const lifeTime = Date.now() + 60 * 60 * 24 * 365 * 1000;
@@ -106,8 +124,9 @@ export function isSessionValid(session: string, id?: number): boolean {
   if (id === undefined) {
     return true;
   } else {
-    return (result.user_id === id &&
-      (Date.now() + 60 * 1000 < result.life_time));
+    // return (result.user_id === id &&
+    //   (Date.now() + 60 * 1000 < result.life_time));
+    return result.user_id === id;
   }
 }
 
@@ -128,7 +147,7 @@ export function getUserById(id: number) {
 
 export function getUserRoleById(id: number) {
   const query = DB.database.prepareQuery<never, { role: number }, [number]>(
-    `SELECT user_name, email FROM member WHERE id = ?`,
+    `SELECT "role" FROM member_role WHERE user_id = ?`,
   );
 
   const result = query.allEntries([id]);

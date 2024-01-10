@@ -87,18 +87,29 @@ export function alterItem(
   const stmt = DB.database.prepareQuery<
     never,
     never,
-    [string, string | number, number]
+    [string | number, number]
   >(`--sql
-  UPDATE item SET ? = ? WHERE id = ?
+  UPDATE item SET ${attribute} = ? WHERE id = ?
   `);
 
   try {
     DB.database.transaction(() => {
-      stmt.execute([attribute, value, item_id]);
+      stmt.execute([value, item_id]);
     });
     return true;
   } catch (e) {
     console.error(e);
     return false;
   }
+}
+
+export function getLastItemId() {
+  const query = DB.database.prepareQuery<never, { id: number }>(
+    `SELECT "id" FROM item ORDER BY "id" DESC LIMIT 1`,
+  );
+
+  const result = query.firstEntry();
+  query.finalize();
+
+  return result;
 }

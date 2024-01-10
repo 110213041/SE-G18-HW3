@@ -25,12 +25,14 @@ async function allHandler(req: Request) {
 
   const shopping_order = ShoppingModel.getShoppingByUserId(allRequest.id);
 
+  console.log(shopping_order);
+
   try {
     const result = shopping_order.map((v) => {
       return {
         id: v.id,
         shipping: ShoppingModel.getOrderShipping(v.id).map((v) =>
-          ShippingModel.getShippingById(v.shopping_id)!
+          ShippingModel.getShippingById(v.shipping_id)!
         ),
       };
     });
@@ -66,7 +68,7 @@ async function getHandler(req: Request) {
     return util.statusResponse(403);
   }
 
-  const shopping_order = ShoppingModel.getShoppingById(getRequest.id);
+  const shopping_order = ShoppingModel.getShoppingById(getRequest.order_id);
   if (shopping_order === undefined) {
     return util.statusResponse(404);
   }
@@ -75,7 +77,7 @@ async function getHandler(req: Request) {
     const result = {
       id: shopping_order.id,
       shipping: ShoppingModel.getOrderShipping(shopping_order.id).map((v) =>
-        ShippingModel.getShippingById(v.shopping_id)!
+        ShippingModel.getShippingById(v.shipping_id)!
       ),
     };
 

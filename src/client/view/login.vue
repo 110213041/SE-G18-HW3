@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { username, password, email, userId, session, userInfo } from "../model/global_state";
-// 全域狀態管理使用者輸入的數據
-//const username = ref('');
-//const password = ref('');
-const loginResponse = ref(null);
+import { findHome } from "../model/global_state";
+
+
 // 使用Vue Router的實例
 const router = useRouter();
 
@@ -33,9 +31,6 @@ const login = async () => {
         // 將 user_info 和 session 存儲到相應的變數中
         userId.value = data.content.user_id;
         session.value = data.content.session;
-        console.log('data:', data);
-        console.log('data.content:', data.content);
-        console.log('data.content.user_id:', data.content.user_id);
 
         // 使用 user_info 和 session 去取得用戶資訊
         const infoResponse = await fetch(`${window.location.origin}/api/account/info`, {
@@ -57,39 +52,44 @@ const login = async () => {
           if (userInfoData.type === 'user_info') {
             console.log('User Info:', userInfoData.content);
 
-            // 在這裡你可以處理用戶資訊，顯示 role
+
             const role = userInfoData.content.role;
             console.log('Role:', role);
+            if (role) {
+              const homePath = findHome(role);
+              router.push(homePath);
+              userInfo.value = userInfoData.content
+              sessionStorage.setItem("save_state", JSON.stringify({ userId: userId.value, session: session.value, userInfo: userInfoData.content }))
+            } else {
+              console.error('Role is undefined or null');
+            }
 
-            userInfo.value = userInfoData.content
           } else {
-            console.error('Unexpected response type:', userInfoData.type);
+            console.error('Failed to get user info:', infoResponse.statusText);
           }
         } else {
-          console.error('Failed to get user info:', infoResponse.statusText);
+          console.error('Unexpected response format:', data);
         }
       } else {
-        console.error('Unexpected response format:', data);
-      }
-    } else {
-      // 處理登入失敗的情況
-      console.error('Login failed:', response.statusText);
+        // 處理登入失敗的情況
+        console.error('Login failed:', response.statusText);
 
-      // 根據錯誤的HTTP狀態碼處理相應的錯誤訊息
-      if (response.status === 403) {
-        // 用戶名或密碼不匹配的錯誤
-        alert('Username or password mismatch');
-      } else if (response.status === 400) {
-        // 錯誤的HTTP方法或內容類型
-        alert('Wrong HTTP method or content type');
+        // 根據錯誤的HTTP狀態碼處理相應的錯誤訊息
+        if (response.status === 403) {
+          // 用戶名或密碼不匹配的錯誤
+          alert('Username or password mismatch');
+        } else if (response.status === 400) {
+          // 錯誤的HTTP方法或內容類型
+          alert('Wrong HTTP method or content type');
+        }
       }
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error during login:', error);
   }
+
 };
-
-
 
 // 前往註冊頁面的方法
 const goToRegister = () => {
@@ -104,74 +104,109 @@ const logout = async () => {
   userId.value = 0
   session.value = ""
   userInfo.value = undefined
+  sessionStorage.removeItem("save_state")
 }
 </script>
 
-
 <template>
   <template v-if="userInfo !== undefined">
-    <div>hello: {{ userInfo.user_name }}</div>
-    <button @click="logout">logout</button>
+    <div class="welcome-container">
+      <div>Hello: {{ userInfo.user_name }}</div>
+      <button @click="logout" class="logout-button">Logout</button>
+    </div>
   </template>
 
   <div v-else>
-    <h2>Login Page</h2>
+    <div class="login-container">
+      <h2>Login Page</h2>
 
-    <label for="username">Username:</label>
-    <input v-model="username" type="text" id="username" />
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input v-model="username" type="text" id="username" class="form-input" />
+      </div>
 
-    <label for="password">Password:</label>
-    <input v-model="password" type="password" id="password" />
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input v-model="password" type="password" id="password" class="form-input" />
+      </div>
 
-    <button @click="login">Login</button>
+      <button @click="login" class="login-button">Login</button>
 
-    <router-link to="/register">Go to Regist</router-link>
+      <router-link to="/register" class="register-link">Go to Register</router-link>
+    </div>
   </div>
 </template>
 
-
-
 <style scoped>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #f4f4f4;
-}
-
-.login-container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.form-group {
+  margin-bottom: 15px;
 }
 
 label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
-input {
+.form-input {
   width: 100%;
   padding: 8px;
-  margin-bottom: 16px;
-  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-button {
+.login-container {
+  width: 30%;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-button {
   background-color: #4caf50;
   color: #fff;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.login-button:hover {
+  background-color: #4caf49;
+}
+
+.register-link {
+  display: block;
+  margin-top: 15px;
+  text-align: center;
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* 歡迎頁面樣式 */
+.welcome-container {
+  text-align: center;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #45a049;
+.logout-button:hover {
+  background-color: #bd2130;
 }
 </style>

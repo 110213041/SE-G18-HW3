@@ -98,7 +98,9 @@ const cartSchema = `--sql
       "user_id" INTEGER NOT NULL,
       "cart" TEXT NOT NULL,
       FOREIGN KEY ("user_id") REFERENCES member(id)
-    )
+    );
+
+    INSERT INTO cart ("user_id", "cart") VALUES (1, '[]');
 `;
 
 export type shopping_db = {
@@ -133,8 +135,8 @@ const shippingSchema = `--sql
     "item_price" INTEGER NOT NULL,
     "item_description" TEXT,
     "quantity" INTEGER NOT NULL,
-    -- 0: 送出, 1: 處理, 2:寄送, 3:到達
-    "ship_status" INTEGER CHECK("ship_status" IN (0, 1, 2, 3)) NOT NULL,
+    -- 0: 送出, 1: 處理, 2:寄送, 3:到達, 4: 取貨
+    "ship_status" INTEGER CHECK("ship_status" IN (0, 1, 2, 3, 4)) NOT NULL,
     FOREIGN KEY ("seller_id") REFERENCES member(id)
   )
 `;

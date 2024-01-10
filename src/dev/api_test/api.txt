@@ -40,6 +40,7 @@
           name: string
           email: string
           password: string
+          as_shopper?: boolean
         }
 
     Response:
@@ -89,7 +90,7 @@
     Getting custom cart.
 
     Request:
-      Method: GET
+      Method: POST
       Header: content-type: application/json
       Body:
         {
@@ -173,6 +174,9 @@
       Fail:
         405 Wrong method or not providing id and session.
 
+  /checkout
+  結賬
+
 /items (有 s)
   /get
     
@@ -253,6 +257,215 @@
         400 Wrong attribute.
         403 Auth Fail.
         405  Wrong method or not providing id and session.
+
+  /create
+    Create item
+
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body:
+        {
+          user_id: number
+          session: string
+          item_name: string
+          item_price: number
+          item_description: string
+        }
+
+    Response:
+      Success:
+        {
+          type: "item_create",
+          content: (/item/get.content 輸出)
+        }
+
+      Fail:
+        400
+        403
+        405
+
+/shopping
+  /all
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+        }
+
+    Response:
+      Success:
+        {
+          type: "shopping_record_all
+          content: {
+            id: number
+            shipping: Array<(/shopping/get.content 輸出)>
+          }
+        }
+
+      Fail:
+        400
+        403
+
+  /get
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          order_id: number;
+        }
+
+    Response:
+      Success:
+        {
+          type: "shopping_record_all
+          content: {
+            id: number
+            shipping: (/shopping/get.content 輸出)
+          }
+        }
+
+      Fail:
+        400
+        403
+
+/shipping
+  運輸單
+  /all
+  取所有運輸單
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+        }
+    
+    Response:
+      Success: 
+        {
+          type: "shipment_all",
+          content: Array<(/shipping/get.value 輸出)>
+        }
+  
+      Fail:
+        400 General Error.
+        403 Auth Fail.
+        405  Wrong method or not providing id and session.
+
+  /get
+    去一個運輸單
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          shipping_order: number;
+        }
+
+    Response:
+      Success:
+        {
+          type: "shipment"
+          content: {
+            id: number;
+            seller_id: number;
+            item_id: number;
+            item_name: string;
+            item_price: number;
+            item_description: string | null;
+            quantity: number;
+            ship_status: 0 | 1 | 2 | 3
+          }
+        }
+
+      Fail:
+        400 General Error.
+        403 Auth Fail.
+        405  Wrong method or not providing id and session.
+
+  /alter
+    改運輸狀態值
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          shipping_order: number;
+          state: number;
+        }
+
+    Response:
+      Success:
+        HTTP status 201
+
+      Fail:
+        400
+        403
+        405
+
+  /rate
+    評分
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          shipping_order: number;
+          state: number;
+        }
+
+    Response:
+      Success:
+        HTTP status 201
+
+      Fail:
+      400
+      403
+      404
+      405
+  
+
+  /rate_get
+    取得評分
+    Request:
+      Method: POST
+      Header: content-type: application/json
+      Body: 
+        {
+          id: number; // (user id)
+          session: string;
+          shipping_order: number;
+          state: number;
+        }
+    
+    Response:
+      Success:
+       {
+        type: "shipping_rate",
+        content: {
+          shipping_id: number
+          rate: number
+        }
+       }
+
+      Fail:
+        403
+        404
+        405
 
 /** Deprecate API, Do Not Use */
 /item (沒有 s)
